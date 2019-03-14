@@ -13,11 +13,11 @@
   "dependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
+    "@babel/preset-es2017": "^7.0.0-beta.53",
+    "babel": "^6.23.0",
     "babel-loader": "^8.0.5",
     "path": "^0.12.7",
-    "webpack": "^4.29.6"
-  },
-  "devDependencies": {
+    "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"
   }
 }

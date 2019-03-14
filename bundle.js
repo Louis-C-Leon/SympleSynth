@@ -97,24 +97,124 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./synthesizer/synth */ "./synthesizer/synth.js");
 
-var Ctx = window.AudioContext || window.webkitAudioContext;
-var currContext = new Ctx();
-var synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
-document.addEventListener("DOMContentLoaded", function () {
-  var play = document.getElementById("synthPlay");
-  var toggle = document.getElementById("toggleOsc");
-  play.addEventListener("click", function () {
-    return synthesizer.playNote(200);
-  });
-  toggle.addEventListener("click", function () {
-    for (var i = 0; i < 3; i++) {
-      synthesizer.setWaveform({
-        index: i,
-        type: "sine"
-      });
+
+const Ctx = window.AudioContext || window.webkitAudioContext;
+const currContext = new Ctx();
+const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
+
+document.addEventListener("DOMContentLoaded", () => {
+  const play = document.getElementById("synthPlay");
+  const toggle = document.getElementById("toggleOsc");
+
+  play.addEventListener("click", () => synthesizer.playNote("E3"));
+
+  toggle.addEventListener("click", () => {
+    for (let i = 0; i < 3; i++) {
+      synthesizer.setWaveform({index: i, type: "sine"});
     }
-  });
+  })
+  
 });
+
+/***/ }),
+
+/***/ "./synthesizer/keyboard_scale.js":
+/*!***************************************!*\
+  !*** ./synthesizer/keyboard_scale.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const scaleToSemitones = {
+  C1: -45,
+  Cs1: -44,
+  D1: -43,
+  Ds1: -42,
+  E1: -41,
+  F1: -40,
+  Fs1: -39,
+  G1: -38,
+  Gs1: -37,
+  A1: -36,
+  As1: -35,
+  B1: -34,
+  C2: -33,
+  Cs2: -32,
+  D2: -31,
+  Ds2: -30,
+  E2: -29,
+  F2: -28,
+  Fs2: -27,
+  G2: -26,
+  Gs2: -25,
+  A2: -24,
+  As2: -23,
+  B2: -22,
+  C3: -21,
+  Cs3: -20,
+  D3: -19,
+  Ds3: -18,
+  E3: -17,
+  F3: -16,
+  Fs3: -15,
+  G3: -14,
+  Gs3: -13,
+  A3: -12,
+  As3: -11,
+  B3: -10,
+  C4: -9,
+  Cs4: -8,
+  D4: -7,
+  Ds4: -6,
+  E4: -5,
+  F4: -4,
+  Fs4: -3,
+  G4: -2,
+  Gs4: -1,
+  A4: 0,
+  As4: 1,
+  B4: 2,
+  C5: 3,
+  Cs5: 4,
+  D5: 5,
+  Ds5: 6,
+  E5: 7,
+  F5: 8,
+  Fs5: 9,
+  G5: 10,
+  Gs5: 11,
+  A5: 12,
+  As5: 13,
+  B5: 14,
+  C6: 15,
+  Cs6: 16,
+  D6: 17,
+  Ds6: 18,
+  E6: 19,
+  F6: 20,
+  Fs6: 21,
+  G6: 22,
+  Gs6: 23,
+  A6: 24,
+  As6: 25,
+  B6: 26,
+  C7: 27,
+  Cs7: 28,
+  D7: 29,
+  Ds7: 30,
+  E7: 31,
+  F7: 32,
+  Fs7: 33,
+  G7: 34,
+  Gs7: 35,
+  A7: 36,
+  As7: 37,
+  B7: 38,
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (scaleToSemitones);
 
 /***/ }),
 
@@ -127,26 +227,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+class Oscillator {
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-var Oscillator =
-/*#__PURE__*/
-function () {
-  function Oscillator(options) {
-    _classCallCheck(this, Oscillator);
-
+  constructor(options) {
     this.type = options.type;
     this.frequency = options.frequency || 440;
     this.state = "stop";
     this.context = options.context;
-    this.node = new OscillatorNode(this.context, {
-      type: this.type,
-      frequency: this.frequency
-    });
+
+    this.node = new OscillatorNode(this.context, {type: this.type, frequency: this.frequency});
     this.volumeNode = this.context.createGain();
     this.volumeNode.gain.value = 0;
     this.node.connect(this.volumeNode);
@@ -154,49 +243,39 @@ function () {
     this.node.start();
   }
 
-  _createClass(Oscillator, [{
-    key: "play",
-    value: function play() {
-      this.volumeNode.gain.value = 1;
-      this.state = "play";
-    }
-  }, {
-    key: "pause",
-    value: function pause() {
-      his.volumeNode.gain.value = 0;
-      this.state = "stop";
-    }
-  }, {
-    key: "destroy",
-    value: function destroy() {
-      this.node.stop();
-      this.node.disconnect();
-      this.volumeNode.disconnect();
-    }
-  }, {
-    key: "setFrequency",
-    value: function setFrequency(freq) {
-      this.frequency = freq;
+  play() {
+    this.volumeNode.gain.value = 1;
+    this.state = "play";
+  }
 
-      if (this.node !== null) {
-        this.node.frequency.setValueAtTime(freq, this.context.currentTime);
-      }
-    }
-  }, {
-    key: "setWave",
-    value: function setWave(form) {
-      this.node.type = form;
-    }
-  }, {
-    key: "connect",
-    value: function connect(connection) {
-      this.endpoint.connect(connection);
-      this.endpoint = connection;
-    }
-  }]);
+  pause() {
+    this.volumeNode.gain.value = 0;
+    this.state = "stop"
+  }
 
-  return Oscillator;
-}();
+  destroy() {
+    this.node.stop();
+    this.node.disconnect();
+    this.volumeNode.disconnect();
+  }
+
+  setFrequency(freq) {
+    this.frequency = freq;
+    if (this.node !== null) {
+      this.node.frequency.setValueAtTime(freq, this.context.currentTime);
+    }
+  }
+
+  setWave(form) {
+    this.node.type = form;
+  }
+
+  connect(connection) {
+    this.endpoint.connect(connection);
+    this.endpoint = connection; 
+  }
+
+}
 
 /* harmony default export */ __webpack_exports__["default"] = (Oscillator);
 
@@ -212,70 +291,52 @@ function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _oscillators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./oscillators */ "./synthesizer/oscillators.js");
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+/* harmony import */ var _keyboard_scale__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./keyboard_scale */ "./synthesizer/keyboard_scale.js");
 
 
 
-var Synth =
-/*#__PURE__*/
-function () {
-  function Synth(ctx) {
-    _classCallCheck(this, Synth);
+class Synth {
 
+  constructor(ctx) {
     this.context = ctx;
-    var osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({
-      type: "sine",
-      context: ctx,
-      connections: []
-    });
-    var osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({
-      type: "square",
-      context: ctx,
-      connections: []
-    });
-    var osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({
-      type: "sawtooth",
-      context: ctx,
-      connections: []
-    });
-    this.oscBank = [osc1, osc2, osc3];
-    this.oscBank.forEach(function (oscillator) {
-      oscillator.connect(ctx.destination);
-    });
+    this.masterFreq = 440;
+    this.semitone = Math.pow(2, 1/12);
+    let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sine", context: ctx, frequency: this.masterFreq});
+    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "square", context: ctx, frequency: this.masterFreq});
+    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sawtooth", context: ctx, frequency: this.masterFreq});
+    this.oscBank = [osc1, osc2, osc3]
+    this.oscBank.forEach( oscillator => {oscillator.connect(ctx.destination)});
   }
 
-  _createClass(Synth, [{
-    key: "playNote",
-    value: function playNote(freq) {
-      if (this.context.state === "suspended") {
-        this.context.resume();
-      }
+  playFreq(freq) {
+    if (this.context.state === "suspended") {
+      this.context.resume();
+    }
+    this.oscBank.forEach( function(oscillator) {
+      oscillator.setFrequency(freq);
+      oscillator.play();
+    })
+  }
 
-      this.oscBank.forEach(function (oscillator) {
-        oscillator.setFrequency(freq);
-        oscillator.play();
-      });
-    }
-  }, {
-    key: "stop",
-    value: function stop() {
-      this.oscBank.forEach(function (oscillator) {
-        oscillator.pause();
-      });
-    }
-  }, {
-    key: "setWaveform",
-    value: function setWaveform(options) {
-      this.oscBank[options.index].setWave(options.type);
-    }
-  }]);
+  playNote(note) {
+    const freq = 440 * Math.pow(this.semitone, _keyboard_scale__WEBPACK_IMPORTED_MODULE_1__["default"][note]);
+    this.playFreq(freq);
+  }
 
-  return Synth;
-}();
+  stop() {
+    this.oscBank.forEach( function(oscillator) {
+      oscillator.pause()
+    })
+  }
+
+  setWaveform(options) {
+    this.oscBank[options.index].setWave(options.type);
+  }
+
+  setOscInterval(options) {
+    
+  }
+}
 
 /* harmony default export */ __webpack_exports__["default"] = (Synth);
 

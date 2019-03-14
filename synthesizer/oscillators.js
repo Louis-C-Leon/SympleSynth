@@ -20,7 +20,7 @@ class Oscillator {
   }
 
   pause() {
-    his.volumeNode.gain.value = 0;
+    this.volumeNode.gain.value = 0;
     this.state = "stop"
   }
 
