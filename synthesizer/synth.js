@@ -29,7 +29,7 @@ class Synth {
   }
 
   setWaveform(options) {
-    this.oscBank[options.index].type = options.type;
+    this.oscBank[options.index].setWave(options.type);
   }
 }
 

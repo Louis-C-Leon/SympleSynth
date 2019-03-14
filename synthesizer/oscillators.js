@@ -10,15 +10,8 @@ class Oscillator {
     this.volumeNode = this.context.createGain();
     this.volumeNode.gain.value = 0;
     this.node.connect(this.volumeNode);
-    let prevConnection = this.volumeNode;
-    options.connections.forEach( (connection) => {
-      prevConnection.connect(connection);
-      prevConnection = connection;
-    });
-    this.endpoint = prevConnection;
+    this.endpoint = this.volumeNode;
     this.node.start();
-
-    this.play = this.play.bind(this);
   }
 
   play() {
@@ -42,6 +35,10 @@ class Oscillator {
     if (this.node !== null) {
       this.node.frequency.setValueAtTime(freq, this.context.currentTime);
     }
+  }
+
+  setWave(form) {
+    this.node.type = form;
   }
 
   connect(connection) {

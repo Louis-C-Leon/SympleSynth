@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   toggle.addEventListener("click", () => {
     for (let i = 0; i < 3; i++) {
-      synthesizer.setWaveform()
+      synthesizer.setWaveform({index: i, type: "sine"});
     }
   })
   

@@ -108,7 +108,10 @@ document.addEventListener("DOMContentLoaded", function () {
   });
   toggle.addEventListener("click", function () {
     for (var i = 0; i < 3; i++) {
-      synthesizer.setWaveform();
+      synthesizer.setWaveform({
+        index: i,
+        type: "sine"
+      });
     }
   });
 });
@@ -147,14 +150,8 @@ function () {
     this.volumeNode = this.context.createGain();
     this.volumeNode.gain.value = 0;
     this.node.connect(this.volumeNode);
-    var prevConnection = this.volumeNode;
-    options.connections.forEach(function (connection) {
-      prevConnection.connect(connection);
-      prevConnection = connection;
-    });
-    this.endpoint = prevConnection;
+    this.endpoint = this.volumeNode;
     this.node.start();
-    this.play = this.play.bind(this);
   }
 
   _createClass(Oscillator, [{
@@ -184,6 +181,11 @@ function () {
       if (this.node !== null) {
         this.node.frequency.setValueAtTime(freq, this.context.currentTime);
       }
+    }
+  }, {
+    key: "setWave",
+    value: function setWave(form) {
+      this.node.type = form;
     }
   }, {
     key: "connect",
@@ -268,7 +270,7 @@ function () {
   }, {
     key: "setWaveform",
     value: function setWaveform(options) {
-      this.oscBank[options.index].type = options.type;
+      this.oscBank[options.index].setWave(options.type);
     }
   }]);
 
