@@ -1,0 +1,23 @@
+{
+  "name": "js_synthesizer",
+  "version": "1.0.0",
+  "description": "basic keyboard synthesizer for use in browsers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack --watch --mode=development",
+    "postinstall": "webpack"
+  },
+  "author": "Louis Leon",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "babel-loader": "^8.0.5",
+    "path": "^0.12.7",
+    "webpack": "^4.29.6"
+  },
+  "devDependencies": {
+    "webpack-cli": "^3.2.3"
+  }
+}
