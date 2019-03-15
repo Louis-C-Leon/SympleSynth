@@ -102,6 +102,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
+window.context = currContext;
 const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
 window.synth = synthesizer;
 
@@ -300,8 +301,22 @@ class Effects {
     filterBank.connect(this.premixer.dry);
     filterBank.connect(this.premixer.wet);
 
-    this.distortion = new WaveShaperNode(ctx);
+    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(100), oversample: "4x"});
+
     this.premixer.wet.connect(this.distortion);
+  }
+
+  makeDistortionCurve(amount) {
+    const k = amount
+    const numSamples = 44100;
+    let curve = new Float32Array(numSamples);
+    const degree = Math.PI / 180;
+    let x;
+    for(let i = 0; i < numSamples; i++) {
+      x = i * 2 / numSamples - 1;
+      curve[i] = ( 3 + k ) * x * 20 * degree / (Math.PI + k * Math.abs(x) );
+    }
+    return curve;
   }
 
   connect(connection) {
@@ -652,8 +667,8 @@ class Synth {
     this.octave = 4;
 
     let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sine", context: ctx});
-    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "square", context: ctx});
-    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "triangle", context: ctx});
+    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sawtooth", context: ctx});
+    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sawtooth", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     
     this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank)

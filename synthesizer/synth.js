@@ -15,8 +15,8 @@ class Synth {
     this.octave = 4;
 
     let osc1 = new Oscillator({type: "sine", context: ctx});
-    let osc2 = new Oscillator({type: "square", context: ctx});
-    let osc3 = new Oscillator({type: "triangle", context: ctx});
+    let osc2 = new Oscillator({type: "sawtooth", context: ctx});
+    let osc3 = new Oscillator({type: "sawtooth", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     
     this.preMixer = new PreMixer(ctx, this.oscBank)
