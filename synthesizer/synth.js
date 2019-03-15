@@ -1,6 +1,7 @@
 import ScaleMap from './keyboard_scale';
 import Oscillator from './oscillators';
 import PreMixer from './pre_mixer';
+import Filters from './filters';
 
 class Synth {
 
@@ -13,16 +14,52 @@ class Synth {
 
     let osc1 = new Oscillator({type: "sine", context: ctx});
     let osc2 = new Oscillator({type: "square", context: ctx});
-    let osc3 = new Oscillator({type: "sawtooth", context: ctx});
+    let osc3 = new Oscillator({type: "triangle", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     
     this.preMixer = new PreMixer(ctx, this.oscBank)
-    this.preMixer.connect(ctx.destination);
+    this.filters = new Filters(ctx);
+
+    this.preMixer.connect(this.filters);
+    this.filters.connect(ctx.destination)
 
   }
 
   preMix(options) {
     this.preMixer.setLevels(options);
+  }
+
+  setFilterOptions(options) {
+    if (options.filter1 !== undefined) {
+      let f1options = options.filter1;
+      if(f1options.frequency !== undefined) {
+        this.filters.setFrequency(0, f1options.frequency);
+      }
+      if(f1options.Q !== undefined ) {
+        this.filters.setQ(0, f1options.Q)
+      }
+      if (f1options.type !== undefined) {
+        this.filters.setType(0, f1options.type);
+      }
+    }
+
+    if (options.filter2 !== undefined) {
+      let f2options = options.filter2;
+      if(f2options.frequency !== undefined) {
+        this.filters.setFrequency(1, f2options.frequency);
+      }
+      if(f2options.Q !== undefined ) {
+        this.filters.setQ(1, f2options.Q)
+      }
+      if (f2options.type !== undefined) {
+        this.filters.setType(1, f2options.type);
+      }
+    }
+
+  }
+
+  setFilterLevels(options) {
+    this.filters.setLevels(options);
   }
 
   playFreq(freq) {

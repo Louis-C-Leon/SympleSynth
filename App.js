@@ -3,6 +3,7 @@ import Synth from './synthesizer/synth';
 const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
 const synthesizer = new Synth(currContext);
+window.synth = synthesizer;
 const waveforms = ["sine", "square", "triangle", "sawtooth"]
 let currWaveform1 = 0;
 let currWaveform2 = 0;

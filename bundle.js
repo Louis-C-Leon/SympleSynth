@@ -101,6 +101,7 @@ __webpack_require__.r(__webpack_exports__);
 const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
 const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
+window.synth = synthesizer;
 const waveforms = ["sine", "square", "triangle", "sawtooth"]
 let currWaveform1 = 0;
 let currWaveform2 = 0;
@@ -164,6 +165,77 @@ document.addEventListener("DOMContentLoaded", () => {
     synthesizer.setWaveform({index: 1, type: waveforms[currWaveform3]})
   })
 });
+
+/***/ }),
+
+/***/ "./synthesizer/filters.js":
+/*!********************************!*\
+  !*** ./synthesizer/filters.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class FilterBank {
+
+  constructor(ctx) {
+    this.context = ctx;
+    
+    this.filter1 = ctx.createBiquadFilter();
+    this.filter2 = ctx.createBiquadFilter();
+    this.filterBank = [this.filter1, this.filter2]
+
+    this.out1 = new GainNode(ctx, {gain: 0.5});
+    this.out2 = new GainNode(ctx, {gain:0.5});
+    this.series = new GainNode(ctx, {gain: 0});
+
+    this.filter1.connect(this.out1);
+    this.filter2.connect(this.out2);
+
+    this.filter1.connect(this.series);
+    this.series.connect(this.filter2);
+  }
+
+  setFrequency(num, freq) {
+    this.filterBank[num].frequency.value = freq;
+  }
+
+  setQ(num, ammt) {
+    this.filterBank[num].Q.value = ammt;
+  }
+
+  setType(num, type){
+    this.filterBank[num].type = type;
+  }
+
+  setLevels(options){
+    if (options.out1 !== undefined) {
+      options.out1 > .5 ? this.out1.gain.value = .5 : this.out1.gain.value = options.out1;
+    }
+    if (options.series !== undefined) {
+      if (options.series > .5) {
+        this.series.gain.value = .5;
+      } else {
+        this.series.gain.value = options.series;
+      }
+      if (this.out1.gain.value + this.series.gain.value > .5) {
+        this.out1.gain.value = .5 - this.series.gain.value;
+      }
+    }
+    if (options.out2 !== undefined) {
+      options.out2 > .5 ? this.out2.gain.value = .5 + this.series.gain.value : this.out2.gain.value = options.out2 + this.series.gain.value;
+    }
+  }
+
+  connect(connection) {
+    this.out2.connect(connection);
+    this.out1.connect(connection);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (FilterBank);
 
 /***/ }),
 
@@ -359,6 +431,12 @@ class PreMixer {
     this.level1.connect(this.compressor);
     this.level2.connect(this.compressor);
     this.level3.connect(this.compressor);
+
+    this.out1 = ctx.createGain({gain: 0.5});
+    this.out2 = ctx.createGain({gain: 0.5});
+    
+    this.compressor.connect(this.out1);
+    this.compressor.connect(this.out2)
   }
 
   setLevels(options) {
@@ -374,11 +452,20 @@ class PreMixer {
     if (options.level3 !== undefined) {
       this.level3.gain.value = options.level3
     }
-
   }
 
-  connect(connection) {
-    this.compressor.connect(connection);
+  setOutput(out1Level) {
+    if(out1Level > 1) {
+      this.out1.gain.value = 1;
+    } else {
+      this.out1.gain.value = out1Level;
+    }
+    this.out2Level = 1 - this.out1Level;
+  }
+
+  connect(filters) {
+    this.out1.connect(filters.filter1);
+    this.out2.connect(filters.filter2);
   }
 
 }
@@ -399,6 +486,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _keyboard_scale__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./keyboard_scale */ "./synthesizer/keyboard_scale.js");
 /* harmony import */ var _oscillators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./oscillators */ "./synthesizer/oscillators.js");
 /* harmony import */ var _pre_mixer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pre_mixer */ "./synthesizer/pre_mixer.js");
+/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters */ "./synthesizer/filters.js");
+
 
 
 
@@ -414,16 +503,52 @@ class Synth {
 
     let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sine", context: ctx});
     let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "square", context: ctx});
-    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sawtooth", context: ctx});
+    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "triangle", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     
     this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank)
-    this.preMixer.connect(ctx.destination);
+    this.filters = new _filters__WEBPACK_IMPORTED_MODULE_3__["default"](ctx);
+
+    this.preMixer.connect(this.filters);
+    this.filters.connect(ctx.destination)
 
   }
 
   preMix(options) {
     this.preMixer.setLevels(options);
+  }
+
+  setFilterOptions(options) {
+    if (options.filter1 !== undefined) {
+      let f1options = options.filter1;
+      if(f1options.frequency !== undefined) {
+        this.filters.setFrequency(0, f1options.frequency);
+      }
+      if(f1options.Q !== undefined ) {
+        this.filters.setQ(0, f1options.Q)
+      }
+      if (f1options.type !== undefined) {
+        this.filters.setType(0, f1options.type);
+      }
+    }
+
+    if (options.filter2 !== undefined) {
+      let f2options = options.filter2;
+      if(f2options.frequency !== undefined) {
+        this.filters.setFrequency(1, f2options.frequency);
+      }
+      if(f2options.Q !== undefined ) {
+        this.filters.setQ(1, f2options.Q)
+      }
+      if (f2options.type !== undefined) {
+        this.filters.setType(1, f2options.type);
+      }
+    }
+
+  }
+
+  setFilterLevels(options) {
+    this.filters.setLevels(options);
   }
 
   playFreq(freq) {

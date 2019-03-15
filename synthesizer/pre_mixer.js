@@ -13,6 +13,12 @@ class PreMixer {
     this.level1.connect(this.compressor);
     this.level2.connect(this.compressor);
     this.level3.connect(this.compressor);
+
+    this.out1 = ctx.createGain({gain: 0.5});
+    this.out2 = ctx.createGain({gain: 0.5});
+    
+    this.compressor.connect(this.out1);
+    this.compressor.connect(this.out2)
   }
 
   setLevels(options) {
@@ -28,11 +34,20 @@ class PreMixer {
     if (options.level3 !== undefined) {
       this.level3.gain.value = options.level3
     }
-
   }
 
-  connect(connection) {
-    this.compressor.connect(connection);
+  setOutput(out1Level) {
+    if(out1Level > 1) {
+      this.out1.gain.value = 1;
+    } else {
+      this.out1.gain.value = out1Level;
+    }
+    this.out2Level = 1 - this.out1Level;
+  }
+
+  connect(filters) {
+    this.out1.connect(filters.filter1);
+    this.out2.connect(filters.filter2);
   }
 
 }
