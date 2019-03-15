@@ -101,20 +101,68 @@ __webpack_require__.r(__webpack_exports__);
 const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
 const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
+const waveforms = ["sine", "square", "triangle", "sawtooth"]
+let currWaveform1 = 0;
+let currWaveform2 = 0;
+let currWaveform3 = 0;
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const play = document.getElementById("synthPlay");
-  const toggle = document.getElementById("toggleOsc");
 
-  play.addEventListener("click", () => synthesizer.playNote("E3"));
+  const toggleOsc1 = document.getElementById("toggleOsc1");
+  const toggleOsc2 = document.getElementById("toggleOsc2");
+  const toggleOsc3 = document.getElementById("toggleOsc3");
 
-  toggle.addEventListener("click", () => {
-    for (let i = 0; i < 3; i++) {
-      // synthesizer.setWaveform({index: i, type: "sine"});
-    }
-    synthesizer.setOscInterval({index: 1, semitones: 5})
+  const level1 = document.getElementById("level1");
+  const level2 = document.getElementById("level2");
+  const level3 = document.getElementById("level3");
+
+  level1.addEventListener("change", (e) => {
+    synthesizer.preMix({level1: e.target.value})
   })
-  
+
+  level2.addEventListener("change", (e) => {
+    synthesizer.preMix({level2: e.target.value})
+  })
+
+  level3.addEventListener("change", (e) => {
+    synthesizer.preMix({level3: e.target.value})
+  })
+
+  play.addEventListener("click", () => {
+    if (synthesizer.state === "pause") {
+      synthesizer.playNote("E3");
+    } else {
+      synthesizer.stop()
+    }
+  });
+
+  toggleOsc1.addEventListener("click", () => {
+    if (currWaveform1 > 2) {
+      currWaveform1 = 0;
+    } else {
+      currWaveform1 = currWaveform1 + 1
+    }
+    synthesizer.setWaveform({index: 1, type: waveforms[currWaveform1]})
+  })
+  toggleOsc2.addEventListener("click", () => {
+    if (currWaveform2 > 2) {
+      currWaveform2 = 0;
+    } else {
+      currWaveform2 = currWaveform2 + 1
+    }
+    synthesizer.setWaveform({index: 2, type: waveforms[currWaveform2]})
+  })
+  toggleOsc3.addEventListener("click", () => {
+    if (currWaveform3 > 2) {
+      currWaveform3 = 0;
+    } else {
+      currWaveform3 = currWaveform3 + 1
+    }
+    synthesizer.setWaveform({index: 1, type: waveforms[currWaveform3]})
+  })
 });
 
 /***/ }),
@@ -287,6 +335,58 @@ class Oscillator {
 
 /***/ }),
 
+/***/ "./synthesizer/pre_mixer.js":
+/*!**********************************!*\
+  !*** ./synthesizer/pre_mixer.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class PreMixer {
+
+  constructor(ctx, oscillators) {
+    this.compressor = ctx.createDynamicsCompressor();
+    this.level1 = ctx.createGain();
+    this.level2 = ctx.createGain();
+    this.level3 = ctx.createGain();
+
+    oscillators[0].connect(this.level1);
+    oscillators[1].connect(this.level2);
+    oscillators[2].connect(this.level3);
+
+    this.level1.connect(this.compressor);
+    this.level2.connect(this.compressor);
+    this.level3.connect(this.compressor);
+  }
+
+  setLevels(options) {
+
+    if (options.level1 !== undefined) {
+      this.level1.gain.value = options.level1
+    }
+
+    if (options.level2 !== undefined) {
+      this.level2.gain.value = options.level2
+    }
+
+    if (options.level3 !== undefined) {
+      this.level3.gain.value = options.level3
+    }
+
+  }
+
+  connect(connection) {
+    this.compressor.connect(connection);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (PreMixer);
+
+/***/ }),
+
 /***/ "./synthesizer/synth.js":
 /*!******************************!*\
   !*** ./synthesizer/synth.js ***!
@@ -296,25 +396,38 @@ class Oscillator {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _oscillators__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./oscillators */ "./synthesizer/oscillators.js");
-/* harmony import */ var _keyboard_scale__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./keyboard_scale */ "./synthesizer/keyboard_scale.js");
+/* harmony import */ var _keyboard_scale__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./keyboard_scale */ "./synthesizer/keyboard_scale.js");
+/* harmony import */ var _oscillators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./oscillators */ "./synthesizer/oscillators.js");
+/* harmony import */ var _pre_mixer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pre_mixer */ "./synthesizer/pre_mixer.js");
+
 
 
 
 class Synth {
 
   constructor(ctx) {
+    this.state = "pause";
+
     this.context = ctx;
     this.masterFreq = 440;
     this.semitone = Math.pow(2, 1/12);
-    let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sine", context: ctx});
-    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "square", context: ctx});
-    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sawtooth", context: ctx});
+
+    let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sine", context: ctx});
+    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "square", context: ctx});
+    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sawtooth", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
-    this.oscBank.forEach( oscillator => {oscillator.connect(ctx.destination)});
+    
+    this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank)
+    this.preMixer.connect(ctx.destination);
+
+  }
+
+  preMix(options) {
+    this.preMixer.setLevels(options);
   }
 
   playFreq(freq) {
+    this.state = "play";
     if (this.context.state === "suspended") {
       this.context.resume();
     }
@@ -325,11 +438,12 @@ class Synth {
   }
 
   playNote(note) {
-    const freq = 440 * Math.pow(this.semitone, _keyboard_scale__WEBPACK_IMPORTED_MODULE_1__["default"][note]);
+    const freq = 440 * Math.pow(this.semitone, _keyboard_scale__WEBPACK_IMPORTED_MODULE_0__["default"][note]);
     this.playFreq(freq);
   }
 
   stop() {
+    this.state = "pause"
     this.oscBank.forEach( function(oscillator) {
       oscillator.pause()
     })
