@@ -1,20 +1,22 @@
 class Effects {
+
   constructor(ctx, filterBank) {
     this.context = ctx;
-    this.premixer = { dry: new GainNode(ctx, {gain: 0.5}), wet: new GainNode(ctx, {gain: 0.5})};
+    this.premixer = { dry: new GainNode(ctx, {gain: .5}), wet: new GainNode(ctx, {gain: .5})};
 
     //connect filters to master dry/wet mix
     filterBank.connect(this.premixer.dry);
     filterBank.connect(this.premixer.wet);
 
-    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(100), oversample: "4x"});
+    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
+    this.reverb = new ConvolverNode(ctx);
 
     this.premixer.wet.connect(this.distortion);
   }
 
   makeDistortionCurve(amount) {
     const k = amount
-    const numSamples = 44100;
+    const numSamples = 4410;
     let curve = new Float32Array(numSamples);
     const degree = Math.PI / 180;
     let x;

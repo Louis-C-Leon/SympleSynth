@@ -1,10 +1,13 @@
 class PreMixer {
 
   constructor(ctx, oscillators) {
+
     this.compressor = ctx.createDynamicsCompressor();
     this.level1 = ctx.createGain();
     this.level2 = ctx.createGain();
     this.level3 = ctx.createGain();
+
+    this.ampOut = new GainNode(ctx, {gain: 0});
 
     oscillators[0].connect(this.level1);
     oscillators[1].connect(this.level2);
@@ -17,8 +20,10 @@ class PreMixer {
     this.out1 = ctx.createGain({gain: 0.5});
     this.out2 = ctx.createGain({gain: 0.5});
     
-    this.compressor.connect(this.out1);
-    this.compressor.connect(this.out2)
+    this.compressor.connect(this.ampOut);
+
+    this.ampOut.connect(this.out1);
+    this.ampOut.connect(this.out2);
   }
 
   setLevels(options) {

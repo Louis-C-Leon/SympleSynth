@@ -3,8 +3,8 @@ class FilterBank {
   constructor(ctx) {
     this.context = ctx;
     
-    this.filter1 = ctx.createBiquadFilter();
-    this.filter2 = ctx.createBiquadFilter();
+    this.filter1 = new BiquadFilterNode(ctx, {frequency: 800});
+    this.filter2 = new BiquadFilterNode(ctx, {frequency: 800});
     this.filterBank = [this.filter1, this.filter2]
 
     this.out1 = new GainNode(ctx, {gain: 0.5});
@@ -28,6 +28,16 @@ class FilterBank {
 
   setType(num, type){
     this.filterBank[num].type = type;
+  }
+
+  setEnvelope(amt){
+    if (amt > 1) {
+      this.envAmt = 1;
+    } else if (amt < 0) {
+      this.envAmt = 0;
+    } else {
+      this.envAmt = amt;
+    }
   }
 
   setLevels(options){

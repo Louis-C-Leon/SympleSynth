@@ -97,6 +97,8 @@
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./synthesizer/synth */ "./synthesizer/synth.js");
 /* harmony import */ var _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GUI/keyboard */ "./GUI/keyboard.js");
+/* harmony import */ var _GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./GUI/visualizer */ "./GUI/visualizer.js");
+
 
 
 
@@ -109,7 +111,10 @@ window.synth = synthesizer;
 document.addEventListener("DOMContentLoaded", () => {
   const keyboard = new _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__["default"](synthesizer);
   window.keyboard = keyboard;
-  
+  const draw = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["default"])(synthesizer);
+
+
+  draw();
 });
 
 /***/ }),
@@ -283,6 +288,62 @@ class Keyboard {
 
 /***/ }),
 
+/***/ "./GUI/visualizer.js":
+/*!***************************!*\
+  !*** ./GUI/visualizer.js ***!
+  \***************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function visualize(synth) {
+
+  const canvas = document.getElementById("visualizer");
+  const ctx = canvas.getContext("2d");
+
+  synth.analyzer.fftSize = 2048;
+  
+  const length = synth.analyzer.frequencyBinCount;
+  const data = new Uint8Array(length);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  return function draw() { 
+    let visual = requestAnimationFrame(draw);
+
+    synth.analyzer.getByteTimeDomainData(data);
+
+    ctx.fillStyle = 'rgb(0, 0, 0)';
+    ctx.fillRect(0,0, canvas.width, canvas.height);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgb(100, 255, 100)';
+    ctx.beginPath();
+
+    let sliceWidth = canvas.width / length;
+    let x = 0;
+
+    for (let i = 0; i < length; i++) {
+      let v = data[i] / 128;
+      let y = v * canvas.height / 2;
+
+      if(i == 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+      x = x + sliceWidth;
+    }
+    ctx.lineTo(canvas.width, canvas.height/2);
+    ctx.stroke();
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (visualize);
+
+/***/ }),
+
 /***/ "./synthesizer/effects.js":
 /*!********************************!*\
   !*** ./synthesizer/effects.js ***!
@@ -293,22 +354,24 @@ class Keyboard {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 class Effects {
+
   constructor(ctx, filterBank) {
     this.context = ctx;
-    this.premixer = { dry: new GainNode(ctx, {gain: 0.5}), wet: new GainNode(ctx, {gain: 0.5})};
+    this.premixer = { dry: new GainNode(ctx, {gain: .5}), wet: new GainNode(ctx, {gain: .5})};
 
     //connect filters to master dry/wet mix
     filterBank.connect(this.premixer.dry);
     filterBank.connect(this.premixer.wet);
 
-    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(100), oversample: "4x"});
+    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
+    this.reverb = new ConvolverNode(ctx);
 
     this.premixer.wet.connect(this.distortion);
   }
 
   makeDistortionCurve(amount) {
     const k = amount
-    const numSamples = 44100;
+    const numSamples = 4410;
     let curve = new Float32Array(numSamples);
     const degree = Math.PI / 180;
     let x;
@@ -330,6 +393,76 @@ class Effects {
 
 /***/ }),
 
+/***/ "./synthesizer/envelopes.js":
+/*!**********************************!*\
+  !*** ./synthesizer/envelopes.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class Envelopes {
+  constructor(ctx, synth, premixer, filters) {
+    this.context = ctx;
+    this.synth = synth;
+
+    this.rampToValueAtTime = this.rampToValueAtTime.bind(this);
+    this.amp = {attack: .2, release: .1, ramp: this.rampToValueAtTime}
+    this.filter = {attack: .5, release: .1, ramp: this.rampToValueAtTime}
+    this.connect();
+  }
+
+  setAmpEnvelope(options) {
+    Object.keys(options).forEach( (param) => {
+      this.amp[param] = options.param;
+    });
+  }
+
+  setFilterEnvelope(options) {
+    Object.keys(options).forEach( (param) => {
+      this.amp[param] = options.param;
+    });
+  }
+
+  attack() {
+    this.rampToValueAtTime("play", [premixer.ampOut.gain, filters.filter1.frequency, filters.filter2.frequency], )
+  }
+
+  release() {
+
+  }
+
+  rampToValueAtTime(type, params, nextVals, periods) {
+
+    let stepSize;
+    const prevTime = this.context.currentTime;
+    const initialVal = param.value;
+    let prevLoopTime = prevTime;
+
+    if (period === 0 && this.synth.state === type) {
+      param.value = nextVal;
+    } else {
+      while (this.context.currentTime < prevTime + period && this.synth.state === type) {
+        stepSize = ((this.context.currentTime - prevLoopTime) / period) * (nextVal - initialVal);
+        prevLoopTime = this.context.currentTime;
+        param.value = param.value + stepSize;
+      }
+      if(type === "pause") {
+        param.value = 0;
+      }
+    }
+  }
+
+  connect() {
+
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Envelopes);
+
+/***/ }),
+
 /***/ "./synthesizer/filters.js":
 /*!********************************!*\
   !*** ./synthesizer/filters.js ***!
@@ -344,8 +477,8 @@ class FilterBank {
   constructor(ctx) {
     this.context = ctx;
     
-    this.filter1 = ctx.createBiquadFilter();
-    this.filter2 = ctx.createBiquadFilter();
+    this.filter1 = new BiquadFilterNode(ctx, {frequency: 800});
+    this.filter2 = new BiquadFilterNode(ctx, {frequency: 800});
     this.filterBank = [this.filter1, this.filter2]
 
     this.out1 = new GainNode(ctx, {gain: 0.5});
@@ -369,6 +502,16 @@ class FilterBank {
 
   setType(num, type){
     this.filterBank[num].type = type;
+  }
+
+  setEnvelope(amt){
+    if (amt > 1) {
+      this.envAmt = 1;
+    } else if (amt < 0) {
+      this.envAmt = 0;
+    } else {
+      this.envAmt = amt;
+    }
   }
 
   setLevels(options){
@@ -521,26 +664,9 @@ class Oscillator {
     this.semitone = Math.pow(2, 1/12);
     this.node = new OscillatorNode(this.context, {type: this.type});
     this.volumeNode = this.context.createGain();
-    this.volumeNode.gain.value = 0;
     this.node.connect(this.volumeNode);
     this.endpoint = this.volumeNode;
     this.node.start();
-  }
-
-  play() {
-    this.volumeNode.gain.value = 1;
-    this.state = "play";
-  }
-
-  pause() {
-    this.volumeNode.gain.value = 0;
-    this.state = "stop";
-  }
-
-  destroy() {
-    this.node.stop();
-    this.node.disconnect();
-    this.volumeNode.disconnect();
   }
 
   setInterval(semitones) {
@@ -581,10 +707,13 @@ __webpack_require__.r(__webpack_exports__);
 class PreMixer {
 
   constructor(ctx, oscillators) {
+
     this.compressor = ctx.createDynamicsCompressor();
     this.level1 = ctx.createGain();
     this.level2 = ctx.createGain();
     this.level3 = ctx.createGain();
+
+    this.ampOut = new GainNode(ctx, {gain: 0});
 
     oscillators[0].connect(this.level1);
     oscillators[1].connect(this.level2);
@@ -597,8 +726,10 @@ class PreMixer {
     this.out1 = ctx.createGain({gain: 0.5});
     this.out2 = ctx.createGain({gain: 0.5});
     
-    this.compressor.connect(this.out1);
-    this.compressor.connect(this.out2)
+    this.compressor.connect(this.ampOut);
+
+    this.ampOut.connect(this.out1);
+    this.ampOut.connect(this.out2);
   }
 
   setLevels(options) {
@@ -650,6 +781,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _pre_mixer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pre_mixer */ "./synthesizer/pre_mixer.js");
 /* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters */ "./synthesizer/filters.js");
 /* harmony import */ var _effects__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./effects */ "./synthesizer/effects.js");
+/* harmony import */ var _envelopes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./envelopes */ "./synthesizer/envelopes.js");
+
 
 
 
@@ -664,20 +797,23 @@ class Synth {
     this.context = ctx;
     this.masterFreq = 440;
     this.semitone = Math.pow(2, 1/12);
-    this.octave = 4;
+    this.octave = 3;
 
     let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sine", context: ctx});
-    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sawtooth", context: ctx});
+    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "square", context: ctx});
     let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sawtooth", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     
-    this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank)
+    this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank);
     this.filters = new _filters__WEBPACK_IMPORTED_MODULE_3__["default"](ctx);
+    this.envelopes = new _envelopes__WEBPACK_IMPORTED_MODULE_5__["default"](ctx, this, this.preMixer, this.filters);
     this.preMixer.connect(this.filters);
 
-    this.effects = new _effects__WEBPACK_IMPORTED_MODULE_4__["default"](ctx, this.filters)
+    this.effects = new _effects__WEBPACK_IMPORTED_MODULE_4__["default"](ctx, this.filters);
+    this.analyzer = ctx.createAnalyser();
 
-    this.effects.connect(ctx.destination)
+    this.effects.connect(this.analyzer);
+    this.analyzer.connect(ctx.destination);
 
     this.stop = this.stop.bind(this);
   }
@@ -687,6 +823,10 @@ class Synth {
   }
 
   setFilterOptions(options) {
+    if(options.envAmt !== undefined) {
+      this.filters.setEnvelope(options.envAmt);
+    }
+
     if (options.filter1 !== undefined) {
       let f1options = options.filter1;
       if(f1options.frequency !== undefined) {
@@ -726,8 +866,9 @@ class Synth {
     }
     this.oscBank.forEach( function(oscillator) {
       oscillator.setFrequency(freq);
-      oscillator.play();
     })
+
+    this.envelopes.attack();
   }
 
   playNote(note) {
@@ -737,9 +878,7 @@ class Synth {
 
   stop() {
     this.state = "pause"
-    this.oscBank.forEach( function(oscillator) {
-      oscillator.pause()
-    })
+    this.envelopes.release();
   }
 
   setWaveform(options) {

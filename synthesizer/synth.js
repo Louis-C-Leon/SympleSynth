@@ -3,6 +3,7 @@ import Oscillator from './oscillators';
 import PreMixer from './pre_mixer';
 import Filters from './filters';
 import Effects from './effects';
+import Envelopes from './envelopes';
 
 class Synth {
 
@@ -12,20 +13,23 @@ class Synth {
     this.context = ctx;
     this.masterFreq = 440;
     this.semitone = Math.pow(2, 1/12);
-    this.octave = 4;
+    this.octave = 3;
 
     let osc1 = new Oscillator({type: "sine", context: ctx});
-    let osc2 = new Oscillator({type: "sawtooth", context: ctx});
+    let osc2 = new Oscillator({type: "square", context: ctx});
     let osc3 = new Oscillator({type: "sawtooth", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     
-    this.preMixer = new PreMixer(ctx, this.oscBank)
+    this.preMixer = new PreMixer(ctx, this.oscBank);
     this.filters = new Filters(ctx);
+    this.envelopes = new Envelopes(ctx, this, this.preMixer, this.filters);
     this.preMixer.connect(this.filters);
 
-    this.effects = new Effects(ctx, this.filters)
+    this.effects = new Effects(ctx, this.filters);
+    this.analyzer = ctx.createAnalyser();
 
-    this.effects.connect(ctx.destination)
+    this.effects.connect(this.analyzer);
+    this.analyzer.connect(ctx.destination);
 
     this.stop = this.stop.bind(this);
   }
@@ -35,6 +39,10 @@ class Synth {
   }
 
   setFilterOptions(options) {
+    if(options.envAmt !== undefined) {
+      this.filters.setEnvelope(options.envAmt);
+    }
+
     if (options.filter1 !== undefined) {
       let f1options = options.filter1;
       if(f1options.frequency !== undefined) {
@@ -74,8 +82,9 @@ class Synth {
     }
     this.oscBank.forEach( function(oscillator) {
       oscillator.setFrequency(freq);
-      oscillator.play();
     })
+
+    this.envelopes.attack();
   }
 
   playNote(note) {
@@ -85,9 +94,7 @@ class Synth {
 
   stop() {
     this.state = "pause"
-    this.oscBank.forEach( function(oscillator) {
-      oscillator.pause()
-    })
+    this.envelopes.release();
   }
 
   setWaveform(options) {

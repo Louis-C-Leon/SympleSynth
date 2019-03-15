@@ -9,26 +9,9 @@ class Oscillator {
     this.semitone = Math.pow(2, 1/12);
     this.node = new OscillatorNode(this.context, {type: this.type});
     this.volumeNode = this.context.createGain();
-    this.volumeNode.gain.value = 0;
     this.node.connect(this.volumeNode);
     this.endpoint = this.volumeNode;
     this.node.start();
-  }
-
-  play() {
-    this.volumeNode.gain.value = 1;
-    this.state = "play";
-  }
-
-  pause() {
-    this.volumeNode.gain.value = 0;
-    this.state = "stop";
-  }
-
-  destroy() {
-    this.node.stop();
-    this.node.disconnect();
-    this.volumeNode.disconnect();
   }
 
   setInterval(semitones) {
