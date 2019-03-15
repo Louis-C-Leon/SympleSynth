@@ -96,75 +96,222 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./synthesizer/synth */ "./synthesizer/synth.js");
+/* harmony import */ var _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GUI/keyboard */ "./GUI/keyboard.js");
+
 
 
 const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
 const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
 window.synth = synthesizer;
-const waveforms = ["sine", "square", "triangle", "sawtooth"]
-let currWaveform1 = 0;
-let currWaveform2 = 0;
-let currWaveform3 = 0;
-
-
 
 document.addEventListener("DOMContentLoaded", () => {
-  const play = document.getElementById("synthPlay");
-
-  const toggleOsc1 = document.getElementById("toggleOsc1");
-  const toggleOsc2 = document.getElementById("toggleOsc2");
-  const toggleOsc3 = document.getElementById("toggleOsc3");
-
-  const level1 = document.getElementById("level1");
-  const level2 = document.getElementById("level2");
-  const level3 = document.getElementById("level3");
-
-  level1.addEventListener("change", (e) => {
-    synthesizer.preMix({level1: e.target.value})
-  })
-
-  level2.addEventListener("change", (e) => {
-    synthesizer.preMix({level2: e.target.value})
-  })
-
-  level3.addEventListener("change", (e) => {
-    synthesizer.preMix({level3: e.target.value})
-  })
-
-  play.addEventListener("click", () => {
-    if (synthesizer.state === "pause") {
-      synthesizer.playNote("E3");
-    } else {
-      synthesizer.stop()
-    }
-  });
-
-  toggleOsc1.addEventListener("click", () => {
-    if (currWaveform1 > 2) {
-      currWaveform1 = 0;
-    } else {
-      currWaveform1 = currWaveform1 + 1
-    }
-    synthesizer.setWaveform({index: 1, type: waveforms[currWaveform1]})
-  })
-  toggleOsc2.addEventListener("click", () => {
-    if (currWaveform2 > 2) {
-      currWaveform2 = 0;
-    } else {
-      currWaveform2 = currWaveform2 + 1
-    }
-    synthesizer.setWaveform({index: 2, type: waveforms[currWaveform2]})
-  })
-  toggleOsc3.addEventListener("click", () => {
-    if (currWaveform3 > 2) {
-      currWaveform3 = 0;
-    } else {
-      currWaveform3 = currWaveform3 + 1
-    }
-    synthesizer.setWaveform({index: 1, type: waveforms[currWaveform3]})
-  })
+  const keyboard = new _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__["default"](synthesizer);
+  window.keyboard = keyboard;
+  
 });
+
+/***/ }),
+
+/***/ "./GUI/keyboard.js":
+/*!*************************!*\
+  !*** ./GUI/keyboard.js ***!
+  \*************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class Keyboard {
+  constructor(synth) {
+    this.synth = synth;
+    this.playNote = this.playNote.bind(this);
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+    const C = document.getElementById("C")
+    C.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("C");
+      func();
+    })
+    C.addEventListener("mouseup", this.synth.stop)
+
+    const Cs = document.getElementById("Cs")
+    Cs.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Cs");
+      func();
+    })
+    Cs.addEventListener("mouseup", this.synth.stop)
+
+    const D = document.getElementById("D")
+    D.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("D");
+      func();
+    })
+    D.addEventListener("mouseup", this.synth.stop)
+
+    const Ds = document.getElementById("Ds")
+    Ds.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Ds");
+      func();
+    })
+    Ds.addEventListener("mouseup", this.synth.stop)
+
+    const E = document.getElementById("E")
+    E.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("E");
+      func();
+    })
+    E.addEventListener("mouseup", this.synth.stop)
+
+    const F = document.getElementById("F")
+    F.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("F");
+      func();
+    })
+    F.addEventListener("mouseup", this.synth.stop)
+
+    const Fs = document.getElementById("Fs")
+    Fs.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Fs");
+      func();
+    })
+    Fs.addEventListener("mouseup", this.synth.stop)
+
+    const G = document.getElementById("G")
+    G.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("G");
+      func();
+    })
+    G.addEventListener("mouseup", this.synth.stop)
+
+    const Gs = document.getElementById("Gs")
+    Gs.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Gs");
+      func();
+    })
+    Gs.addEventListener("mouseup", this.synth.stop);
+
+    const A = document.getElementById("A")
+    A.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("A");
+      func();
+    })
+    A.addEventListener("mouseup", this.synth.stop)
+
+    const As = document.getElementById("As")
+    As.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("As");
+      func();
+    })
+    As.addEventListener("mouseup", this.synth.stop)
+
+    const B = document.getElementById("B")
+    B.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("B");
+      func();
+    })
+    B.addEventListener("mouseup", this.synth.stop)
+
+    document.addEventListener("keydown", (e) => {
+      const key = e.key.toLowerCase();
+      if (key === "a") {
+        let func = this.playNote("C")
+        func();
+      } else if (key === "w") {
+        let func = this.playNote("Cs")
+        func();
+      } else if (key === "s") {
+        let func = this.playNote("D")
+        func();
+      } else if (key === "e") {
+        let func = this.playNote("Ds")
+        func();
+      } else if (key === "d") {
+        let func = this.playNote("E")
+        func();
+      } else if (key === "f") {
+        let func = this.playNote("F")
+        func();
+      } else if (key === "t") {
+        let func = this.playNote("Fs")
+        func();
+      } else if (key === "g") {
+        let func = this.playNote("G")
+        func();
+      } else if (key === "y") {
+        let func = this.playNote("Gs")
+        func();
+      } else if (key === "h") {
+        let func = this.playNote("A")
+        func();
+      } else if (key === "u") {
+        let func = this.playNote("As")
+        func();
+      } else if (key === "j") {
+        let func = this.playNote("B")
+        func();
+      }
+    }); 
+
+    document.addEventListener("keyup", this.synth.stop)
+  }
+
+  playNote(note) {
+    let notePlay = note + this.synth.octave;
+    return(() => {
+      this.synth.playNote(notePlay);
+    })
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Keyboard);
+
+/***/ }),
+
+/***/ "./synthesizer/effects.js":
+/*!********************************!*\
+  !*** ./synthesizer/effects.js ***!
+  \********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class Effects {
+  constructor(ctx, filterBank) {
+    this.context = ctx;
+    this.premixer = { dry: new GainNode(ctx, {gain: 0.5}), wet: new GainNode(ctx, {gain: 0.5})};
+
+    //connect filters to master dry/wet mix
+    filterBank.connect(this.premixer.dry);
+    filterBank.connect(this.premixer.wet);
+
+    this.distortion = new WaveShaperNode(ctx);
+    this.premixer.wet.connect(this.distortion);
+  }
+
+  connect(connection) {
+    this.distortion.connect(connection);
+    this.premixer.dry.connect(connection);
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (Effects);
 
 /***/ }),
 
@@ -487,6 +634,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _oscillators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./oscillators */ "./synthesizer/oscillators.js");
 /* harmony import */ var _pre_mixer__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pre_mixer */ "./synthesizer/pre_mixer.js");
 /* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters */ "./synthesizer/filters.js");
+/* harmony import */ var _effects__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./effects */ "./synthesizer/effects.js");
+
 
 
 
@@ -500,6 +649,7 @@ class Synth {
     this.context = ctx;
     this.masterFreq = 440;
     this.semitone = Math.pow(2, 1/12);
+    this.octave = 4;
 
     let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "sine", context: ctx});
     let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_1__["default"]({type: "square", context: ctx});
@@ -508,10 +658,13 @@ class Synth {
     
     this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank)
     this.filters = new _filters__WEBPACK_IMPORTED_MODULE_3__["default"](ctx);
-
     this.preMixer.connect(this.filters);
-    this.filters.connect(ctx.destination)
 
+    this.effects = new _effects__WEBPACK_IMPORTED_MODULE_4__["default"](ctx, this.filters)
+
+    this.effects.connect(ctx.destination)
+
+    this.stop = this.stop.bind(this);
   }
 
   preMix(options) {

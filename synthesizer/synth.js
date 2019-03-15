@@ -2,6 +2,7 @@ import ScaleMap from './keyboard_scale';
 import Oscillator from './oscillators';
 import PreMixer from './pre_mixer';
 import Filters from './filters';
+import Effects from './effects';
 
 class Synth {
 
@@ -11,6 +12,7 @@ class Synth {
     this.context = ctx;
     this.masterFreq = 440;
     this.semitone = Math.pow(2, 1/12);
+    this.octave = 4;
 
     let osc1 = new Oscillator({type: "sine", context: ctx});
     let osc2 = new Oscillator({type: "square", context: ctx});
@@ -19,10 +21,13 @@ class Synth {
     
     this.preMixer = new PreMixer(ctx, this.oscBank)
     this.filters = new Filters(ctx);
-
     this.preMixer.connect(this.filters);
-    this.filters.connect(ctx.destination)
 
+    this.effects = new Effects(ctx, this.filters)
+
+    this.effects.connect(ctx.destination)
+
+    this.stop = this.stop.bind(this);
   }
 
   preMix(options) {
