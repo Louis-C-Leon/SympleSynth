@@ -110,8 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   toggle.addEventListener("click", () => {
     for (let i = 0; i < 3; i++) {
-      synthesizer.setWaveform({index: i, type: "sine"});
+      // synthesizer.setWaveform({index: i, type: "sine"});
     }
+    synthesizer.setOscInterval({index: 1, semitones: 5})
   })
   
 });
@@ -231,11 +232,12 @@ class Oscillator {
 
   constructor(options) {
     this.type = options.type;
-    this.frequency = options.frequency || 440;
     this.state = "stop";
     this.context = options.context;
-
-    this.node = new OscillatorNode(this.context, {type: this.type, frequency: this.frequency});
+    this.interval = 0;
+    this.frequency = 440;
+    this.semitone = Math.pow(2, 1/12);
+    this.node = new OscillatorNode(this.context, {type: this.type});
     this.volumeNode = this.context.createGain();
     this.volumeNode.gain.value = 0;
     this.node.connect(this.volumeNode);
@@ -250,7 +252,7 @@ class Oscillator {
 
   pause() {
     this.volumeNode.gain.value = 0;
-    this.state = "stop"
+    this.state = "stop";
   }
 
   destroy() {
@@ -259,11 +261,15 @@ class Oscillator {
     this.volumeNode.disconnect();
   }
 
+  setInterval(semitones) {
+    this.interval = semitones;
+    this.setFrequency(this.frequency);
+  }
+
   setFrequency(freq) {
     this.frequency = freq;
-    if (this.node !== null) {
-      this.node.frequency.setValueAtTime(freq, this.context.currentTime);
-    }
+    let frequency = freq * Math.pow(this.semitone, this.interval);
+    this.node.frequency.setValueAtTime(frequency, this.context.currentTime);
   }
 
   setWave(form) {
@@ -301,9 +307,9 @@ class Synth {
     this.context = ctx;
     this.masterFreq = 440;
     this.semitone = Math.pow(2, 1/12);
-    let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sine", context: ctx, frequency: this.masterFreq});
-    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "square", context: ctx, frequency: this.masterFreq});
-    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sawtooth", context: ctx, frequency: this.masterFreq});
+    let osc1 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sine", context: ctx});
+    let osc2 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "square", context: ctx});
+    let osc3 = new _oscillators__WEBPACK_IMPORTED_MODULE_0__["default"]({type: "sawtooth", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     this.oscBank.forEach( oscillator => {oscillator.connect(ctx.destination)});
   }
@@ -334,7 +340,7 @@ class Synth {
   }
 
   setOscInterval(options) {
-    
+    this.oscBank[options.index].setInterval(options.semitones);
   }
 }
 

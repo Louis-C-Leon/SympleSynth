@@ -12,8 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   toggle.addEventListener("click", () => {
     for (let i = 0; i < 3; i++) {
-      synthesizer.setWaveform({index: i, type: "sine"});
+      // synthesizer.setWaveform({index: i, type: "sine"});
     }
+    synthesizer.setOscInterval({index: 1, semitones: 5})
   })
   
 });

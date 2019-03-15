@@ -7,9 +7,9 @@ class Synth {
     this.context = ctx;
     this.masterFreq = 440;
     this.semitone = Math.pow(2, 1/12);
-    let osc1 = new Oscillator({type: "sine", context: ctx, frequency: this.masterFreq});
-    let osc2 = new Oscillator({type: "square", context: ctx, frequency: this.masterFreq});
-    let osc3 = new Oscillator({type: "sawtooth", context: ctx, frequency: this.masterFreq});
+    let osc1 = new Oscillator({type: "sine", context: ctx});
+    let osc2 = new Oscillator({type: "square", context: ctx});
+    let osc3 = new Oscillator({type: "sawtooth", context: ctx});
     this.oscBank = [osc1, osc2, osc3]
     this.oscBank.forEach( oscillator => {oscillator.connect(ctx.destination)});
   }
@@ -40,7 +40,7 @@ class Synth {
   }
 
   setOscInterval(options) {
-    
+    this.oscBank[options.index].setInterval(options.semitones);
   }
 }
 

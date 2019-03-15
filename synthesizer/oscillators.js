@@ -2,11 +2,12 @@ class Oscillator {
 
   constructor(options) {
     this.type = options.type;
-    this.frequency = options.frequency || 440;
     this.state = "stop";
     this.context = options.context;
-
-    this.node = new OscillatorNode(this.context, {type: this.type, frequency: this.frequency});
+    this.interval = 0;
+    this.frequency = 440;
+    this.semitone = Math.pow(2, 1/12);
+    this.node = new OscillatorNode(this.context, {type: this.type});
     this.volumeNode = this.context.createGain();
     this.volumeNode.gain.value = 0;
     this.node.connect(this.volumeNode);
@@ -21,7 +22,7 @@ class Oscillator {
 
   pause() {
     this.volumeNode.gain.value = 0;
-    this.state = "stop"
+    this.state = "stop";
   }
 
   destroy() {
@@ -30,11 +31,15 @@ class Oscillator {
     this.volumeNode.disconnect();
   }
 
+  setInterval(semitones) {
+    this.interval = semitones;
+    this.setFrequency(this.frequency);
+  }
+
   setFrequency(freq) {
     this.frequency = freq;
-    if (this.node !== null) {
-      this.node.frequency.setValueAtTime(freq, this.context.currentTime);
-    }
+    let frequency = freq * Math.pow(this.semitone, this.interval);
+    this.node.frequency.setValueAtTime(frequency, this.context.currentTime);
   }
 
   setWave(form) {
