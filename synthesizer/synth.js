@@ -22,6 +22,8 @@ class Synth {
     
     this.preMixer = new PreMixer(ctx, this.oscBank);
     this.filters = new Filters(ctx);
+    this.filterFreqs = [this.filters.filter1.frequency.value, this.filters.filter2.frequency.value];
+    
     this.envelopes = new Envelopes(ctx, this, this.preMixer, this.filters);
     this.preMixer.connect(this.filters);
 
@@ -46,6 +48,7 @@ class Synth {
     if (options.filter1 !== undefined) {
       let f1options = options.filter1;
       if(f1options.frequency !== undefined) {
+        this.filterFreqs[0] = f1options.frequency
         this.filters.setFrequency(0, f1options.frequency);
       }
       if(f1options.Q !== undefined ) {
@@ -59,6 +62,7 @@ class Synth {
     if (options.filter2 !== undefined) {
       let f2options = options.filter2;
       if(f2options.frequency !== undefined) {
+        this.filterFreqs[1] = f2options.frequency
         this.filters.setFrequency(1, f2options.frequency);
       }
       if(f2options.Q !== undefined ) {

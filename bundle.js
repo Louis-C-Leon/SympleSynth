@@ -415,7 +415,7 @@ class Envelopes {
     this.release = this.release.bind(this);
 
     this.filterSustain = null;
-    this.filterOrigin = null;
+    this.filterOrigin = this.synth.filterFreqs[0];
 
     this.stepInterval = null;
     this.checkInterval = null;
@@ -450,9 +450,9 @@ class Envelopes {
 
     let filterTarget;
     if (this.filterSustain === null) {
-      filterTarget = this.filters[0].value + (800 * this.filterAmt);
+      this.filterOrigin = this.synth.filterFreqs[0]
+      filterTarget = this.filterOrigin + (800 * this.filterAmt);
       this.filterSustain = filterTarget;
-      this.filterOrigin = this.filters[0].value;
     } else {
       filterTarget = this.filterSustain;
     }
@@ -465,6 +465,8 @@ class Envelopes {
       clearInterval(this.checkInterval);
       this.checkInterval = null;
     }
+
+    console.log(this.filterSustain);
 
     this.stepInterval = setInterval(function(){
       this.step(ampStepSize, filterStepSize, filterTarget, 1)}.bind(this), 10);
@@ -499,6 +501,7 @@ class Envelopes {
         this.checkInterval = null;
       }
 
+      console.log(this.filterOrigin);
       this.stepInterval = setInterval(function(){
         this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
 
@@ -524,6 +527,9 @@ class Envelopes {
         clearInterval(this.checkInterval);
         this.stepInterval = null;
         this.clearInterval = null;
+
+        this.filterOrigin = null;
+        this.filterSustain = null;
     }
   }
 }
@@ -878,6 +884,8 @@ class Synth {
     
     this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank);
     this.filters = new _filters__WEBPACK_IMPORTED_MODULE_3__["default"](ctx);
+    this.filterFreqs = [this.filters.filter1.frequency.value, this.filters.filter2.frequency.value];
+    
     this.envelopes = new _envelopes__WEBPACK_IMPORTED_MODULE_5__["default"](ctx, this, this.preMixer, this.filters);
     this.preMixer.connect(this.filters);
 
@@ -902,6 +910,7 @@ class Synth {
     if (options.filter1 !== undefined) {
       let f1options = options.filter1;
       if(f1options.frequency !== undefined) {
+        this.filterFreqs[0] = f1options.frequency
         this.filters.setFrequency(0, f1options.frequency);
       }
       if(f1options.Q !== undefined ) {
@@ -915,6 +924,7 @@ class Synth {
     if (options.filter2 !== undefined) {
       let f2options = options.filter2;
       if(f2options.frequency !== undefined) {
+        this.filterFreqs[1] = f2options.frequency
         this.filters.setFrequency(1, f2options.frequency);
       }
       if(f2options.Q !== undefined ) {

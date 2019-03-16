@@ -13,7 +13,7 @@ class Envelopes {
     this.release = this.release.bind(this);
 
     this.filterSustain = null;
-    this.filterOrigin = null;
+    this.filterOrigin = this.synth.filterFreqs[0];
 
     this.stepInterval = null;
     this.checkInterval = null;
@@ -48,9 +48,9 @@ class Envelopes {
 
     let filterTarget;
     if (this.filterSustain === null) {
-      filterTarget = this.filters[0].value + (800 * this.filterAmt);
+      this.filterOrigin = this.synth.filterFreqs[0]
+      filterTarget = this.filterOrigin + (800 * this.filterAmt);
       this.filterSustain = filterTarget;
-      this.filterOrigin = this.filters[0].value;
     } else {
       filterTarget = this.filterSustain;
     }
@@ -63,6 +63,8 @@ class Envelopes {
       clearInterval(this.checkInterval);
       this.checkInterval = null;
     }
+
+    console.log(this.filterSustain);
 
     this.stepInterval = setInterval(function(){
       this.step(ampStepSize, filterStepSize, filterTarget, 1)}.bind(this), 10);
@@ -97,6 +99,7 @@ class Envelopes {
         this.checkInterval = null;
       }
 
+      console.log(this.filterOrigin);
       this.stepInterval = setInterval(function(){
         this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
 
@@ -122,6 +125,9 @@ class Envelopes {
         clearInterval(this.checkInterval);
         this.stepInterval = null;
         this.clearInterval = null;
+
+        this.filterOrigin = null;
+        this.filterSustain = null;
     }
   }
 }

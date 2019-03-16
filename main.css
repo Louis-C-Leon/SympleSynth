@@ -13,10 +13,31 @@ html {
   height: 100%;
 }
 
+.keyboardContainer {
+  display: grid;
+  height: 500px;
+  width: 850px;
+  grid-template-columns: 10% 23% auto 23% 10%;
+  grid-template-rows: 20% 20% auto;
+  background-image: url("https://speedmetals.com/wp-content/uploads/2017/02/SpeedMetals-MetalTexture-Feb17.jpg");
+}
+
 #visualizer {
-  width: 50%;
-  height: 200px;
+  grid-column-start: 3;
+  grid-column-end: 4;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  place-self: center stretch;
   border: 1px solid black;
+}
+
+.keyboard {
+  grid-column-start: 2;
+  grid-column-end: 5;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  position: relative;
+  display: flex;
 }
 
 .blackKey {
@@ -48,12 +69,6 @@ html {
   cursor: pointer;
 }
 
-.keyboard {
-  position: relative;
-  height: 200px;
-  width: 50%;
-  display: flex;
-}
 .keyPressed {
   border: 2px solid red;
 }
