@@ -4,11 +4,9 @@ function visualize(synth) {
   const ctx = canvas.getContext("2d");
 
   synth.analyzer.fftSize = 2048;
-  
+
   const length = synth.analyzer.frequencyBinCount;
   const data = new Uint8Array(length);
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   return function draw() { 
     let visual = requestAnimationFrame(draw);

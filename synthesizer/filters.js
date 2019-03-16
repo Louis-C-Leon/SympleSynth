@@ -3,8 +3,11 @@ class FilterBank {
   constructor(ctx) {
     this.context = ctx;
     
-    this.filter1 = new BiquadFilterNode(ctx, {frequency: 800});
-    this.filter2 = new BiquadFilterNode(ctx, {frequency: 800});
+    this.filter1 = new BiquadFilterNode(ctx, {frequency: 400});
+    this.filter2 = new BiquadFilterNode(ctx, {frequency: 400});
+    this.base1 = 400;
+    this.base = 400;
+
     this.filterBank = [this.filter1, this.filter2]
 
     this.out1 = new GainNode(ctx, {gain: 0.5});

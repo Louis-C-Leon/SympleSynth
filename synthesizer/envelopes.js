@@ -2,11 +2,15 @@ class Envelopes {
   constructor(ctx, synth, premixer, filters) {
     this.context = ctx;
     this.synth = synth;
+    this.filters = filters;
+    this.filterAmt = .8;
+    this.ampOut = premixer.ampOut;
 
-    this.rampToValueAtTime = this.rampToValueAtTime.bind(this);
-    this.amp = {attack: .2, release: .1, ramp: this.rampToValueAtTime}
-    this.filter = {attack: .5, release: .1, ramp: this.rampToValueAtTime}
-    this.connect();
+    this.amp = {attack: .5, release: .1}
+    this.filter = {attack: 1, release: .1}
+
+    this.attack = this.attack.bind(this);
+    this.release = this.release.bind(this);
   }
 
   setAmpEnvelope(options) {
@@ -22,35 +26,35 @@ class Envelopes {
   }
 
   attack() {
-    this.rampToValueAtTime("play", [premixer.ampOut.gain, filters.filter1.frequency, filters.filter2.frequency], )
+    const startTime = this.context.currentTime;
+    const freqDiff = 800 * this.filterAmt;
+
+    let prevLoopTime = startTime;
+    let loopTime = 0.001
+    let ampStepSize;
+    let freqStepSize;
+    while((this.context.currentTime < startTime + this.amp.attack ||
+      this.context.currentTime < startTime + this.filter.attack) &&
+      this.synth.state === "play") {
+        debugger;
+        loopTime = this.context.currentTime - prevLoopTime;
+        ampStepSize = loopTime / this.amp.attack;
+        freqStepSize = loopTime / this.amp.attack * freqDiff;
+
+        if(this.context.currentTime < startTime + this.amp.attack) {
+          this.ampOut.gain.value = this.ampOut.gain.value + ampStepSize;
+        }
+
+        if(this.context.currentTime < startTime + this.filter.attack) {
+          this.filters.filter1.frequency.value = this.filters.filter1.frequency.value + freqStepSize;
+          this.filters.filter2.frequency.value = this.filters.filter2.frequency.value + freqStepSize;
+        }
+
+    }
+
   }
 
   release() {
-
-  }
-
-  rampToValueAtTime(type, params, nextVals, periods) {
-
-    let stepSize;
-    const prevTime = this.context.currentTime;
-    const initialVal = param.value;
-    let prevLoopTime = prevTime;
-
-    if (period === 0 && this.synth.state === type) {
-      param.value = nextVal;
-    } else {
-      while (this.context.currentTime < prevTime + period && this.synth.state === type) {
-        stepSize = ((this.context.currentTime - prevLoopTime) / period) * (nextVal - initialVal);
-        prevLoopTime = this.context.currentTime;
-        param.value = param.value + stepSize;
-      }
-      if(type === "pause") {
-        param.value = 0;
-      }
-    }
-  }
-
-  connect() {
 
   }
 }
