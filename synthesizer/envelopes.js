@@ -2,15 +2,21 @@ class Envelopes {
   constructor(ctx, synth, premixer, filters) {
     this.context = ctx;
     this.synth = synth;
-    this.filters = filters;
-    this.filterAmt = 1.4;
-    this.ampOut = premixer.ampOut;
+    this.filters = [filters.filter1.frequency, filters.filter2.frequency];
+    this.filterAmt = 1.6;
+    this.ampOut = premixer.ampOut.gain;
 
-    this.amp = {attack: 0, release: .1}
-    this.filter = {attack: .5, release: .1}
+    this.amp = {attack: .2, release: .2}
+    this.filter = {attack: .6, release: .2}
 
     this.attack = this.attack.bind(this);
     this.release = this.release.bind(this);
+
+    this.filterSustain = null;
+    this.filterOrigin = null;
+
+    this.stepInterval = null;
+    this.checkInterval = null;
   }
 
   setAmpEnvelope(options) {
@@ -30,54 +36,93 @@ class Envelopes {
     if(this.amp.attack <= 0) {
       ampStepSize = 1;
     } else { 
-      ampStepSize = 1 / (this.amp.attack * 1000 / 5)
+      ampStepSize = 1 / (this.amp.attack * 1000 / 10)
     }
 
     let filterStepSize;
     if(this.filter.attack <= 0) {
       filterStepSize = 1000 * this.filterAmt
     } else {
-      filterStepSize = (1000 * this.filterAmt) / (this.filter.attack * 1000 / 5)
+      filterStepSize = (1000 * this.filterAmt) / (this.filter.attack * 1000 / 10)
     }
 
-    const filterTarget = this.filters.filter1.frequency.value + (800 * this.filterAmt);
+    let filterTarget;
+    if (this.filterSustain === null) {
+      filterTarget = this.filters[0].value + (800 * this.filterAmt);
+      this.filterSustain = filterTarget;
+      this.filterOrigin = this.filters[0].value;
+    } else {
+      filterTarget = this.filterSustain;
+    }
 
-    setInterval(function(){
-      this.step(ampStepSize, filterStepSize, filterTarget)}.bind(this), 5);
+    if (this.stepInterval !== null) {
+      clearInterval(this.stepInterval);
+      this.stepInterval = null;
+    }
+    if (this.checkInterval !== null) {
+      clearInterval(this.checkInterval);
+      this.checkInterval = null;
+    }
+
+    this.stepInterval = setInterval(function(){
+      this.step(ampStepSize, filterStepSize, filterTarget, 1)}.bind(this), 10);
+    
+    this.checkInterval = setInterval(function(){
+      this.check(1, filterTarget, "play")}.bind(this), 10);
   }
 
   release() {
-    let ampStepSize;
-    if(this.amp.attack <= 0) {
-      ampStepSize = 1;
-    } else { 
-      ampStepSize = 1 / (this.amp.attack * 1000 / 5)
-    }
+      let ampStepSize;
+      if(this.amp.release <= 0) {
+        ampStepSize = 0 - (this.ampOut.value);
+      } else { 
+        ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
+      }
 
-    let filterStepSize;
-    if(this.filter.attack <= 0) {
-      filterStepSize = 1000 * this.filterAmt
-    } else {
-      filterStepSize = (1000 * this.filterAmt) / (this.filter.attack * 1000 / 5)
-    }
+      let filterStepSize;
+      if(this.filter.attack <= 0) {
+        filterStepSize = this.filterOrigin - this.filters[0].value
+      } else {
+        filterStepSize = (this.filterOrigin - this.filters[0].value) / (this.filter.attack * 1000 / 5)
+      }
 
-    const filterTarget = this.filters.filter1.frequency.value + (800 * this.filterAmt);
+      const filterTarget = this.filterOrigin;
 
-    setInterval(function(){
-      this.step(ampStepSize, filterStepSize, filterTarget)}.bind(this), 5);
+      if (this.stepInterval !== null) {
+        clearInterval(this.stepInterval);
+        this.stepInterval = null;
+      }
+      if (this.checkInterval !== null) {
+        clearInterval(this.checkInterval);
+        this.checkInterval = null;
+      }
+
+      this.stepInterval = setInterval(function(){
+        this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
+
+      this.checkInterval = setInterval(function(){
+        this.check(0, filterTarget, "pause")}.bind(this), 10);
   }
 
-  step(ampStep, filterStep, filter1Target) {
-    if (this.ampOut.gain.value < 1) {
-      this.ampOut.gain.value = this.ampOut.gain.value + ampStep;
+  step(ampStep, filterStep, filter1Target, ampTarget) {
+    if (Math.abs(this.ampOut.value - ampTarget) > .001) {
+      this.ampOut.value = this.ampOut.value + ampStep;
     }
-    if (this.filters.filter1.frequency.value < filter1Target) {
-      this.filters.filter2.frequency.value = this.filters.filter2.frequency.value + filterStep;
-      this.filters.filter1.frequency.value = this.filters.filter1.frequency.value + filterStep;
+    if (Math.abs(this.filters[0].value - filter1Target) > 5) {
+      this.filters[0].value = this.filters[0].value + filterStep;
+      this.filters[1].value = this.filters[1].value + filterStep;
     }
-    if(this.ampOut.gain.value >= 1 && this.filters.filter1.frequency.value >= filter1Target) {
-      clearInterval();
-    } 
+  }
+
+  check(ampTarget, filter1Target, state) {
+    if((Math.abs(this.ampOut.value - ampTarget) <= .001 &&
+      Math.abs(this.filters[0].value - filter1Target) <= 5) ) {
+        console.log("clearing!")
+        clearInterval(this.stepInterval);
+        clearInterval(this.checkInterval);
+        this.stepInterval = null;
+        this.clearInterval = null;
+    }
   }
 }
 
