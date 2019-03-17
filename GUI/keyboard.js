@@ -1,3 +1,6 @@
+import setupOscControls from './osc_controls';
+import setupFilterControls from './filter_controls';
+
 class Keyboard {
   constructor(synth) {
     this.synth = synth;
@@ -210,23 +213,8 @@ class Keyboard {
       this.synth.octave = (e.target.value)
     }.bind(this));
 
-    const osc1Dropdown = document.getElementById("osc1Dropdown")
-    osc1Dropdown.addEventListener("click", function() {
-      document.getElementById("osc1Wave").classList.toggle("show");
-    })
-
-    window.addEventListener("click", function() {
-      if (!event.target.matches('.waveDropDown')) {
-        var dropdowns = document.getElementsByClassName("dropdown-content");
-        var i;
-        for (i = 0; i < dropdowns.length; i++) {
-          var openDropdown = dropdowns[i];
-          if (openDropdown.classList.contains('show')) {
-            openDropdown.classList.remove('show');
-          }
-        }
-      }
-    })
+    setupOscControls(this.synth);
+    setupFilterControls(this.synth);
   }
 
   playNote(note) {

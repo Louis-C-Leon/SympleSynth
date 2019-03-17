@@ -24,8 +24,8 @@
       </div>
 
       <div class="oscControls" id="osc1Controls">
-        <div class="waveDropdown" id="osc1Dropdown">Sine</div>
-        <div class="waveDropdownContent" id="osc1Wave">
+        <div class="waveDropdown dropdown" id="osc1Dropdown">sine</div>
+        <div class="waveDropdownContent dropdownContent" id="osc1Wave">
           <div class="waveDropdownItem" id="osc1Sine">sine</div>
           <div class="waveDropdownItem" id="osc1Square">square</div>
           <div class="waveDropdownItem" id="osc1Triangle">triangle</div>
@@ -37,6 +37,34 @@
           value=".7" id="osc1Vol">
       </div>
 
+      <div class="oscControls" id="osc2Controls">
+        <div class="waveDropdown dropdown" id="osc2Dropdown">square</div>
+        <div class="waveDropdownContent dropdownContent" id="osc2Wave">
+          <div class="waveDropdownItem" id="osc2Sine">sine</div>
+          <div class="waveDropdownItem" id="osc2Square">square</div>
+          <div class="waveDropdownItem" id="osc2Triangle">triangle</div>
+          <div class="waveDropdownItem" id="osc2Saw">sawtooth</div>
+        </div>
+        <input type="range" min="-12" max="12" step="1" id="osc2Interval" 
+          class="inputSlider oscInputSlider" value="0">
+        <input type="range" class="inputSlider oscInputSlider"min="0" max="1" step=".05" 
+          value=".7" id="osc2Vol">
+      </div>
+
+      <div class="oscControls" id="osc3Controls">
+        <div class="waveDropdown dropdown" id="osc3Dropdown">sawtooth</div>
+        <div class="waveDropdownContent dropdownContent" id="osc3Wave">
+          <div class="waveDropdownItem" id="osc3Sine">sine</div>
+          <div class="waveDropdownItem" id="osc3Square">square</div>
+          <div class="waveDropdownItem" id="osc3Triangle">triangle</div>
+          <div class="waveDropdownItem" id="osc3Saw">sawtooth</div>
+        </div>
+        <input type="range" min="-12" max="12" step="1" id="osc3Interval" 
+          class="inputSlider oscInputSlider" value="0">
+        <input type="range" class="inputSlider oscInputSlider"min="0" max="1" step=".05" 
+          value=".7" id="osc3Vol">
+      </div>
+      
       <div class="keyboard">
         <div class="whiteKey" id="C">A
           <div class="blackKey" id="Cs">W</div>

@@ -12,7 +12,5 @@ document.addEventListener("DOMContentLoaded", () => {
   const keyboard = new Keyboard(synthesizer);
   window.keyboard = keyboard;
   const draw = visualize(synthesizer);
-
-
   draw();
 });
