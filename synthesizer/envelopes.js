@@ -12,9 +12,6 @@ class Envelopes {
     this.attack = this.attack.bind(this);
     this.release = this.release.bind(this);
 
-    this.filterSustain = null;
-    this.filterOrigin = this.synth.filterFreqs[0];
-
     this.stepInterval = null;
     this.checkInterval = null;
   }
@@ -41,70 +38,76 @@ class Envelopes {
 
     let filterStepSize;
     if(this.filter.attack <= 0) {
-      filterStepSize = 1000 * this.filterAmt
+      filterStepSize = this.synth.endFreq - this.synth.startFreq;
     } else {
-      filterStepSize = (1000 * this.filterAmt) / (this.filter.attack * 1000 / 10)
+      filterStepSize = (this.synth.endFreq - this.synth.startFreq) / (this.filter.attack * 1000 / 10)
     }
 
-    let filterTarget;
-    if (this.filterSustain === null) {
-      this.filterOrigin = this.synth.filterFreqs[0]
-      filterTarget = this.filterOrigin + (800 * this.filterAmt);
-      this.filterSustain = filterTarget;
-    } else {
-      filterTarget = this.filterSustain;
-    }
 
-    if (this.stepInterval !== null) {
+    if (this.stepInterval === null) {
+      this.stepInterval = setInterval(function(){
+        this.step(ampStepSize, filterStepSize, this.synth.endFreq, 1)}.bind(this), 10);
+
+      this.checkInterval = setInterval(function(){
+        this.check(1, this.synth.endFreq, "play")}.bind(this), 10);
+    } else {
       clearInterval(this.stepInterval);
+      clearInterval(this.checkInterval)
       this.stepInterval = null;
-    }
-    if (this.checkInterval !== null) {
-      clearInterval(this.checkInterval);
       this.checkInterval = null;
+      console.log("clearing!");
+
+      this.stepInterval = setInterval(function(){
+        this.step(ampStepSize, filterStepSize, this.synth.endFreq, 1)}.bind(this), 10);
+
+      this.checkInterval = setInterval(function(){
+        this.check(1, this.synth.endFreq, "play")}.bind(this), 10);
     }
+    // if (this.checkInterval !== null) {
+    //   clearInterval(this.checkInterval);
+    //   this.checkInterval = null;
+    // }
 
-    console.log(this.filterSustain);
+    // console.log(this.filterSustain);
 
-    this.stepInterval = setInterval(function(){
-      this.step(ampStepSize, filterStepSize, filterTarget, 1)}.bind(this), 10);
+    // this.stepInterval = setInterval(function(){
+    //   this.step(ampStepSize, filterStepSize, filterTarget, 1)}.bind(this), 10);
     
-    this.checkInterval = setInterval(function(){
-      this.check(1, filterTarget, "play")}.bind(this), 10);
+    // this.checkInterval = setInterval(function(){
+    //   this.check(1, filterTarget, "play")}.bind(this), 10);
   }
 
   release() {
-      // let ampStepSize;
-      // if(this.amp.release <= 0) {
-      //   ampStepSize = 0 - (this.ampOut.value);
-      // } else { 
-      //   ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
-      // }
+      let ampStepSize;
+      if(this.amp.release <= 0) {
+        ampStepSize = 0 - (this.ampOut.value);
+      } else { 
+        ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
+      }
 
-      // let filterStepSize;
-      // if(this.filter.attack <= 0) {
-      //   filterStepSize = this.filterOrigin - this.filters[0].value
-      // } else {
-      //   filterStepSize = (this.filterOrigin - this.filters[0].value) / (this.filter.attack * 1000 / 5)
-      // }
+      let filterStepSize;
+      if(this.filter.attack <= 0) {
+        filterStepSize = this.synth.startFreq - this.synth.endFreq
+      } else {
+        filterStepSize = (this.synth.startFreq - this.synth.endFreq) / (this.filter.attack * 1000 / 5)
+      }
 
-      // const filterTarget = this.filterOrigin;
+      if (this.stepInterval !== null) {
+        clearInterval(this.stepInterval);
+        this.stepInterval = null;
+        console.log("clearing!")
+      }
+      if (this.checkInterval !== null) {
+        clearInterval(this.checkInterval);
+        this.checkInterval = null;
+      }
 
-      // if (this.stepInterval !== null) {
-      //   clearInterval(this.stepInterval);
-      //   this.stepInterval = null;
-      // }
-      // if (this.checkInterval !== null) {
-      //   clearInterval(this.checkInterval);
-      //   this.checkInterval = null;
-      // }
+      console.log(this.filterOrigin);
+      this.stepInterval = setInterval(function(){
+        this.step(ampStepSize, filterStepSize, this.synth.startFreq, 0)}.bind(this), 10);
 
-      // console.log(this.filterOrigin);
-      // this.stepInterval = setInterval(function(){
-      //   this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
-
-      // this.checkInterval = setInterval(function(){
-      //   this.check(0, filterTarget, "pause")}.bind(this), 10);
+      this.checkInterval = setInterval(function(){
+        this.check(0, this.synth.startFreq, "pause")}.bind(this), 10);
   }
 
   step(ampStep, filterStep, filter1Target, ampTarget) {
@@ -119,15 +122,14 @@ class Envelopes {
 
   check(ampTarget, filter1Target, state) {
     if((Math.abs(this.ampOut.value - ampTarget) <= .001 &&
-      Math.abs(this.filters[0].value - filter1Target) <= 5) ) {
+      Math.abs(this.filters[0].value - filter1Target) <= 5) ||
+      this.synth.state !== state ||
+      this.ampOut.value > 1) {
         console.log("clearing!")
         clearInterval(this.stepInterval);
         clearInterval(this.checkInterval);
         this.stepInterval = null;
         this.clearInterval = null;
-
-        this.filterOrigin = null;
-        this.filterSustain = null;
     }
   }
 }
