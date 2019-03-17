@@ -83,6 +83,8 @@ const scaleToSemitones = {
   A7: 36,
   As7: 37,
   B7: 38,
+  C8: 39,
+  Cs8: 40
 }
 
 export default scaleToSemitones;

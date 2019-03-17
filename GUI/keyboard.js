@@ -100,7 +100,47 @@ class Keyboard {
       let func = this.playNote("B");
       func();
     })
+    B.addEventListener("mouseup", this.synth.stop);
+
+    const C2 = document.getElementById("C2")
+    C2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("C2");
+      func();
+    })
     B.addEventListener("mouseup", this.synth.stop)
+
+    const Cs2 = document.getElementById("Cs2")
+    Cs2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Cs2");
+      func();
+    })
+    Cs2.addEventListener("mouseup", this.synth.stop)
+
+    const D2 = document.getElementById("D2")
+    D2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("D2");
+      func();
+    })
+    D2.addEventListener("mouseup", this.synth.stop)
+
+    const Ds2 = document.getElementById("Ds2")
+    Ds2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Ds2");
+      func();
+    })
+    Ds2.addEventListener("mouseup", this.synth.stop)
+
+    const E2 = document.getElementById("E2")
+    E2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("E2");
+      func();
+    })
+    E2.addEventListener("mouseup", this.synth.stop)
 
     document.addEventListener("keydown", (e) => {
       const key = e.key.toLowerCase();
@@ -140,17 +180,68 @@ class Keyboard {
       } else if (key === "j") {
         let func = this.playNote("B")
         func();
+      } else if (key === "k") {
+        let func = this.playNote("C2")
+        func();
+      } else if (key === "o") {
+        let func = this.playNote("Cs2")
+        func();
+      } else if (key === "l") {
+        let func = this.playNote("D2")
+        func();
+      } else if (key === "p") {
+        let func = this.playNote("Ds2")
+        func();
+      } else if (key === ";") {
+        let func = this.playNote("E2")
+        func();
       }
     }); 
 
-    document.addEventListener("keyup", this.synth.stop)
+    document.addEventListener("keyup", this.synth.stop);
+
+    const volume = document.getElementById("masterVolume");
+    volume.addEventListener("input", function(e) {
+      this.synth.setMasterVolume(e.target.value);
+    }.bind(this));
+
+    const octave = document.getElementById("synthOctave");
+    octave.addEventListener("input", function(e) {
+      this.synth.octave = (e.target.value)
+    }.bind(this));
+
+    const osc1Dropdown = document.getElementById("osc1Dropdown")
+    osc1Dropdown.addEventListener("click", function() {
+      document.getElementById("osc1Wave").classList.toggle("show");
+    })
+
+    window.addEventListener("click", function() {
+      if (!event.target.matches('.waveDropDown')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    })
   }
 
   playNote(note) {
-    let notePlay = note + this.synth.octave;
-    return(() => {
-      this.synth.playNote(notePlay);
-    })
+    if (note.search("2") === -1) {
+      let notePlay = note + this.synth.octave;
+      return(() => {
+        this.synth.playNote(notePlay);
+      })
+    } else {
+      note = note.slice(0, note.length - 1);
+      let notePlay = note + (parseInt(this.synth.octave) + 1);
+      return(() => {
+        this.synth.playNote(notePlay);
+      })
+    }
   }
 }
 

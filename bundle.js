@@ -230,7 +230,47 @@ class Keyboard {
       let func = this.playNote("B");
       func();
     })
+    B.addEventListener("mouseup", this.synth.stop);
+
+    const C2 = document.getElementById("C2")
+    C2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("C2");
+      func();
+    })
     B.addEventListener("mouseup", this.synth.stop)
+
+    const Cs2 = document.getElementById("Cs2")
+    Cs2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Cs2");
+      func();
+    })
+    Cs2.addEventListener("mouseup", this.synth.stop)
+
+    const D2 = document.getElementById("D2")
+    D2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("D2");
+      func();
+    })
+    D2.addEventListener("mouseup", this.synth.stop)
+
+    const Ds2 = document.getElementById("Ds2")
+    Ds2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("Ds2");
+      func();
+    })
+    Ds2.addEventListener("mouseup", this.synth.stop)
+
+    const E2 = document.getElementById("E2")
+    E2.addEventListener("mousedown", (e) => {
+      e.stopPropagation();
+      let func = this.playNote("E2");
+      func();
+    })
+    E2.addEventListener("mouseup", this.synth.stop)
 
     document.addEventListener("keydown", (e) => {
       const key = e.key.toLowerCase();
@@ -270,17 +310,68 @@ class Keyboard {
       } else if (key === "j") {
         let func = this.playNote("B")
         func();
+      } else if (key === "k") {
+        let func = this.playNote("C2")
+        func();
+      } else if (key === "o") {
+        let func = this.playNote("Cs2")
+        func();
+      } else if (key === "l") {
+        let func = this.playNote("D2")
+        func();
+      } else if (key === "p") {
+        let func = this.playNote("Ds2")
+        func();
+      } else if (key === ";") {
+        let func = this.playNote("E2")
+        func();
       }
     }); 
 
-    document.addEventListener("keyup", this.synth.stop)
+    document.addEventListener("keyup", this.synth.stop);
+
+    const volume = document.getElementById("masterVolume");
+    volume.addEventListener("input", function(e) {
+      this.synth.setMasterVolume(e.target.value);
+    }.bind(this));
+
+    const octave = document.getElementById("synthOctave");
+    octave.addEventListener("input", function(e) {
+      this.synth.octave = (e.target.value)
+    }.bind(this));
+
+    const osc1Dropdown = document.getElementById("osc1Dropdown")
+    osc1Dropdown.addEventListener("click", function() {
+      document.getElementById("osc1Wave").classList.toggle("show");
+    })
+
+    window.addEventListener("click", function() {
+      if (!event.target.matches('.waveDropDown')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    })
   }
 
   playNote(note) {
-    let notePlay = note + this.synth.octave;
-    return(() => {
-      this.synth.playNote(notePlay);
-    })
+    if (note.search("2") === -1) {
+      let notePlay = note + this.synth.octave;
+      return(() => {
+        this.synth.playNote(notePlay);
+      })
+    } else {
+      note = note.slice(0, note.length - 1);
+      let notePlay = note + (parseInt(this.synth.octave) + 1);
+      return(() => {
+        this.synth.playNote(notePlay);
+      })
+    }
   }
 }
 
@@ -476,37 +567,37 @@ class Envelopes {
   }
 
   release() {
-      let ampStepSize;
-      if(this.amp.release <= 0) {
-        ampStepSize = 0 - (this.ampOut.value);
-      } else { 
-        ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
-      }
+  //     let ampStepSize;
+  //     if(this.amp.release <= 0) {
+  //       ampStepSize = 0 - (this.ampOut.value);
+  //     } else { 
+  //       ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
+  //     }
 
-      let filterStepSize;
-      if(this.filter.attack <= 0) {
-        filterStepSize = this.filterOrigin - this.filters[0].value
-      } else {
-        filterStepSize = (this.filterOrigin - this.filters[0].value) / (this.filter.attack * 1000 / 5)
-      }
+  //     let filterStepSize;
+  //     if(this.filter.attack <= 0) {
+  //       filterStepSize = this.filterOrigin - this.filters[0].value
+  //     } else {
+  //       filterStepSize = (this.filterOrigin - this.filters[0].value) / (this.filter.attack * 1000 / 5)
+  //     }
 
-      const filterTarget = this.filterOrigin;
+  //     const filterTarget = this.filterOrigin;
 
-      if (this.stepInterval !== null) {
-        clearInterval(this.stepInterval);
-        this.stepInterval = null;
-      }
-      if (this.checkInterval !== null) {
-        clearInterval(this.checkInterval);
-        this.checkInterval = null;
-      }
+  //     if (this.stepInterval !== null) {
+  //       clearInterval(this.stepInterval);
+  //       this.stepInterval = null;
+  //     }
+  //     if (this.checkInterval !== null) {
+  //       clearInterval(this.checkInterval);
+  //       this.checkInterval = null;
+  //     }
 
-      console.log(this.filterOrigin);
-      this.stepInterval = setInterval(function(){
-        this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
+  //     console.log(this.filterOrigin);
+  //     this.stepInterval = setInterval(function(){
+  //       this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
 
-      this.checkInterval = setInterval(function(){
-        this.check(0, filterTarget, "pause")}.bind(this), 10);
+  //     this.checkInterval = setInterval(function(){
+  //       this.check(0, filterTarget, "pause")}.bind(this), 10);
   }
 
   step(ampStep, filterStep, filter1Target, ampTarget) {
@@ -716,9 +807,41 @@ const scaleToSemitones = {
   A7: 36,
   As7: 37,
   B7: 38,
+  C8: 39,
+  Cs8: 40
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (scaleToSemitones);
+
+/***/ }),
+
+/***/ "./synthesizer/master_mixer.js":
+/*!*************************************!*\
+  !*** ./synthesizer/master_mixer.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class MasterMixer {
+  constructor(ctx, effects) {
+    this.context = ctx;
+    this.volume = new GainNode(ctx, {gain: .7});
+    effects.connect(this.volume);
+  }
+
+  connect(connector) {
+    this.volume.connect(connector);
+  }
+
+  setVolume(vol) {
+    this.volume.gain.value = vol;
+  }
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (MasterMixer);
 
 /***/ }),
 
@@ -860,6 +983,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters */ "./synthesizer/filters.js");
 /* harmony import */ var _effects__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./effects */ "./synthesizer/effects.js");
 /* harmony import */ var _envelopes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./envelopes */ "./synthesizer/envelopes.js");
+/* harmony import */ var _master_mixer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./master_mixer */ "./synthesizer/master_mixer.js");
+
 
 
 
@@ -892,7 +1017,9 @@ class Synth {
     this.effects = new _effects__WEBPACK_IMPORTED_MODULE_4__["default"](ctx, this.filters);
     this.analyzer = ctx.createAnalyser();
 
-    this.effects.connect(this.analyzer);
+    this.master = new _master_mixer__WEBPACK_IMPORTED_MODULE_6__["default"](ctx, this.effects);
+
+    this.master.connect(this.analyzer);
     this.analyzer.connect(ctx.destination);
 
     this.stop = this.stop.bind(this);
@@ -900,6 +1027,10 @@ class Synth {
 
   preMix(options) {
     this.preMixer.setLevels(options);
+  }
+
+  setMasterVolume(vol) {
+    this.master.setVolume(vol)
   }
 
   setFilterOptions(options) {

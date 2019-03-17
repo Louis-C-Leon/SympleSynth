@@ -4,6 +4,7 @@ import PreMixer from './pre_mixer';
 import Filters from './filters';
 import Effects from './effects';
 import Envelopes from './envelopes';
+import MasterMix from './master_mixer';
 
 class Synth {
 
@@ -30,7 +31,9 @@ class Synth {
     this.effects = new Effects(ctx, this.filters);
     this.analyzer = ctx.createAnalyser();
 
-    this.effects.connect(this.analyzer);
+    this.master = new MasterMix(ctx, this.effects);
+
+    this.master.connect(this.analyzer);
     this.analyzer.connect(ctx.destination);
 
     this.stop = this.stop.bind(this);
@@ -38,6 +41,10 @@ class Synth {
 
   preMix(options) {
     this.preMixer.setLevels(options);
+  }
+
+  setMasterVolume(vol) {
+    this.master.setVolume(vol)
   }
 
   setFilterOptions(options) {

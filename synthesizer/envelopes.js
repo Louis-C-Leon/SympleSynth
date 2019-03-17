@@ -74,37 +74,37 @@ class Envelopes {
   }
 
   release() {
-      let ampStepSize;
-      if(this.amp.release <= 0) {
-        ampStepSize = 0 - (this.ampOut.value);
-      } else { 
-        ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
-      }
+  //     let ampStepSize;
+  //     if(this.amp.release <= 0) {
+  //       ampStepSize = 0 - (this.ampOut.value);
+  //     } else { 
+  //       ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
+  //     }
 
-      let filterStepSize;
-      if(this.filter.attack <= 0) {
-        filterStepSize = this.filterOrigin - this.filters[0].value
-      } else {
-        filterStepSize = (this.filterOrigin - this.filters[0].value) / (this.filter.attack * 1000 / 5)
-      }
+  //     let filterStepSize;
+  //     if(this.filter.attack <= 0) {
+  //       filterStepSize = this.filterOrigin - this.filters[0].value
+  //     } else {
+  //       filterStepSize = (this.filterOrigin - this.filters[0].value) / (this.filter.attack * 1000 / 5)
+  //     }
 
-      const filterTarget = this.filterOrigin;
+  //     const filterTarget = this.filterOrigin;
 
-      if (this.stepInterval !== null) {
-        clearInterval(this.stepInterval);
-        this.stepInterval = null;
-      }
-      if (this.checkInterval !== null) {
-        clearInterval(this.checkInterval);
-        this.checkInterval = null;
-      }
+  //     if (this.stepInterval !== null) {
+  //       clearInterval(this.stepInterval);
+  //       this.stepInterval = null;
+  //     }
+  //     if (this.checkInterval !== null) {
+  //       clearInterval(this.checkInterval);
+  //       this.checkInterval = null;
+  //     }
 
-      console.log(this.filterOrigin);
-      this.stepInterval = setInterval(function(){
-        this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
+  //     console.log(this.filterOrigin);
+  //     this.stepInterval = setInterval(function(){
+  //       this.step(ampStepSize, filterStepSize, filterTarget, 0)}.bind(this), 10);
 
-      this.checkInterval = setInterval(function(){
-        this.check(0, filterTarget, "pause")}.bind(this), 10);
+  //     this.checkInterval = setInterval(function(){
+  //       this.check(0, filterTarget, "pause")}.bind(this), 10);
   }
 
   step(ampStep, filterStep, filter1Target, ampTarget) {
