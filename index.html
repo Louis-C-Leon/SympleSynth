@@ -54,16 +54,46 @@
       <div class="oscControls" id="osc3Controls">
         <div class="waveDropdown dropdown" id="osc3Dropdown">sawtooth</div>
         <div class="waveDropdownContent dropdownContent" id="osc3Wave">
-          <div class="waveDropdownItem" id="osc3Sine">sine</div>
-          <div class="waveDropdownItem" id="osc3Square">square</div>
-          <div class="waveDropdownItem" id="osc3Triangle">triangle</div>
-          <div class="waveDropdownItem" id="osc3Saw">sawtooth</div>
+          <div class="waveDropdownItem dropdownItem" id="osc3Sine">sine</div>
+          <div class="waveDropdownItem dropdownItem" id="osc3Square">square</div>
+          <div class="waveDropdownItem dropdownItem" id="osc3Triangle">triangle</div>
+          <div class="waveDropdownItem dropdownItem" id="osc3Saw">sawtooth</div>
         </div>
         <input type="range" min="-12" max="12" step="1" id="osc3Interval" 
           class="inputSlider oscInputSlider" value="0">
         <input type="range" class="inputSlider oscInputSlider"min="0" max="1" step=".05" 
           value=".7" id="osc3Vol">
       </div>
+
+      <div class="filterControls" id="filter1Controls">
+        <div class="filterDropdown dropdown" id="filter1Dropdown">lowpass</div>
+        <div class="filterDropdownContent dropdownContent" id="filter1Type">
+          <div class="filterDropdownItem dropdownItem" id="filter1Lowpass">lowpass</div>
+          <div class="filterDropdownItem dropdownItem" id="filter1Highpass">highpass</div>
+          <div class="filterDropdownItem dropdownItem" id="filter1Bandpass">bandpass</div>
+        </div>
+        <input type="range" min="50" max="17000" step="5" id="filter1Freq"
+          class="inputSlider filterInputSlider" value="400">
+        <input type="range" min="1" max="30" step="1" id="filter1Q"
+          class="inputSlider filterInputSlider" value="1">
+        <input type="range" min="0" max="1" step=".05"  id="filter1Level"
+          class="inputSlider filterInputSlider" value="0">
+      </div>
+
+      <div class="filterControls" id="filter2Controls">
+          <div class="filterDropdown dropdown" id="filter2Dropdown">lowpass</div>
+          <div class="filterDropdownContent dropdownContent" id="filter2Type">
+            <div class="filterDropdownItem dropdownItem" id="filter2Lowpass">lowpass</div>
+            <div class="filterDropdownItem dropdownItem" id="filter2Highpass">highpass</div>
+            <div class="filterDropdownItem dropdownItem" id="filter2Bandpass">bandpass</div>
+          </div>
+          <input type="range" min="50" max="17000" step="5" id="filter2Freq"
+            class="inputSlider filterInputSlider" value="400">
+          <input type="range" min="1" max="30" step="1" id="filter2Q"
+            class="inputSlider filterInputSlider" value="1">
+          <input type="range" min="0" max="1" step=".05"  id="filter2Level"
+            class="inputSlider filterInputSlider" value="1">
+        </div>
       
       <div class="keyboard">
         <div class="whiteKey" id="C">A

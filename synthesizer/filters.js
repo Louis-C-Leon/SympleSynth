@@ -10,12 +10,14 @@ class FilterBank {
 
     this.filterBank = [this.filter1, this.filter2]
 
-    this.out1 = new GainNode(ctx, {gain: 0.5});
-    this.out2 = new GainNode(ctx, {gain:0.5});
+    this.wetOut = new GainNode(ctx, {gain: 0.5});
+    this.dryOut = new GainNode(ctx, {gain:0});
     this.series = new GainNode(ctx, {gain: 0});
+    this.parallel = new GainNode(ctx, {gain: 0.5})
 
-    this.filter1.connect(this.out1);
-    this.filter2.connect(this.out2);
+    this.filter1.connect(this.parallel);
+    this.parallel.connect(this.wetOut)
+    this.filter2.connect(this.wetOut);
 
     this.filter1.connect(this.series);
     this.series.connect(this.filter2);
@@ -44,27 +46,27 @@ class FilterBank {
   }
 
   setLevels(options){
-    if (options.out1 !== undefined) {
-      options.out1 > .5 ? this.out1.gain.value = .5 : this.out1.gain.value = options.out1;
-    }
     if (options.series !== undefined) {
       if (options.series > .5) {
         this.series.gain.value = .5;
       } else {
         this.series.gain.value = options.series;
       }
-      if (this.out1.gain.value + this.series.gain.value > .5) {
-        this.out1.gain.value = .5 - this.series.gain.value;
-      }
+      this.parallel.gain.value = 0.5 - this.series.gain.value;
     }
-    if (options.out2 !== undefined) {
-      options.out2 > .5 ? this.out2.gain.value = .5 + this.series.gain.value : this.out2.gain.value = options.out2 + this.series.gain.value;
+    if (options.wet !== undefined) {
+      if(options.wet > .5) {
+        this.wetOut.gain.value = .5;
+      } else {
+        this.wetOut.gain.value = options.wet;
+      }
+      this.dryOut.gain.value = 0.5 - this.wetOut.gain.value
     }
   }
 
   connect(connection) {
-    this.out2.connect(connection);
-    this.out1.connect(connection);
+    this.wetOut.connect(connection);
+    this.dryOut.connect(connection);
   }
 
 }

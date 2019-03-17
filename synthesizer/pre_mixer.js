@@ -52,7 +52,8 @@ class PreMixer {
 
   connect(filters) {
     this.out1.connect(filters.filter1);
-    this.out2.connect(filters.filter2);
+    this.out1.connect(filters.filter2);
+    this.out2.connect(filters.dryOut);
   }
 
 }

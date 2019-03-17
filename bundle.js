@@ -128,6 +128,78 @@ document.addEventListener("DOMContentLoaded", () => {
 __webpack_require__.r(__webpack_exports__);
 function setupFilterControls(synth) {
 
+  const filter1Dropdown = document.getElementById("filter1Dropdown");
+  filter1Dropdown.addEventListener("click", function() {
+    document.getElementById("filter1Type").classList.toggle("show");
+  });
+
+  const filter1Type = document.getElementById("filter1Type");
+    filter1Type.addEventListener("click", function(e) {
+      const dropdown = document.getElementById("filter1Dropdown");
+      if (e.target.id === "filter1Lowpass") {
+        dropdown.innerHTML = "lowpass";
+        synth.setFilterOptions({filter1: {type: "lowpass"}});
+      } else if (e.target.id === "filter1Highpass") {
+        dropdown.innerHTML = "highpass";
+        synth.setFilterOptions({filter1: {type: "highpass"}});
+      } else if (e.target.id === "filter1Bandpass") {
+        dropdown.innerHTML = "bandpass";
+        synth.setFilterOptions({filter1: {type: "bandpass"}});
+      }
+    }.bind(this));
+
+  const filter1Freq = document.getElementById("filter1Freq");
+  filter1Freq.addEventListener("input", function(e) {
+    synth.setFilterOptions({filter1: {frequency: e.target.value}});
+  }.bind(this));
+
+  const filter1Q = document.getElementById("filter1Q");
+  filter1Q.addEventListener("input", function(e){
+    synth.setFilterOptions({filter1: {Q: e.target.value}});
+  }.bind(this));
+
+  const filter1Level = document.getElementById("filter1Level");
+  filter1Level.addEventListener("input", function(e){
+    synth.setFilterLevels({series: e.target.value});
+  }.bind(this));
+
+
+  const filter2Dropdown = document.getElementById("filter2Dropdown");
+  filter2Dropdown.addEventListener("click", function() {
+    document.getElementById("filter2Type").classList.toggle("show");
+  });
+
+  const filter2Type = document.getElementById("filter2Type");
+    filter2Type.addEventListener("click", function(e) {
+      const dropdown = document.getElementById("filter2Dropdown");
+      if (e.target.id === "filter2Lowpass") {
+        dropdown.innerHTML = "lowpass";
+        synth.setFilterOptions({filter2: {type: "lowpass"}});
+      } else if (e.target.id === "filter2Highpass") {
+        dropdown.innerHTML = "highpass";
+        synth.setFilterOptions({filter2: {type: "highpass"}});
+      } else if (e.target.id === "filter2Bandpass") {
+        dropdown.innerHTML = "bandpass";
+        synth.setFilterOptions({filter2: {type: "bandpass"}});
+      }
+    }.bind(this));
+
+  const filter2Freq = document.getElementById("filter2Freq");
+  filter2Freq.addEventListener("input", function(e) {
+    synth.setFilterOptions({filter2: {frequency: e.target.value}});
+  }.bind(this));
+
+  const filter2Q = document.getElementById("filter2Q");
+  filter2Q.addEventListener("input", function(e){
+    synth.setFilterOptions({filter2: {Q: e.target.value}});
+  }.bind(this));
+
+  const filter2Level = document.getElementById("filter2Level");
+  filter2Level.addEventListener("input", function(e){
+    synth.setFilterLevels({wet: e.target.value / 2});
+  }.bind(this));
+
+
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (setupFilterControls);
@@ -782,12 +854,14 @@ class FilterBank {
 
     this.filterBank = [this.filter1, this.filter2]
 
-    this.out1 = new GainNode(ctx, {gain: 0.5});
-    this.out2 = new GainNode(ctx, {gain:0.5});
+    this.wetOut = new GainNode(ctx, {gain: 0.5});
+    this.dryOut = new GainNode(ctx, {gain:0});
     this.series = new GainNode(ctx, {gain: 0});
+    this.parallel = new GainNode(ctx, {gain: 0.5})
 
-    this.filter1.connect(this.out1);
-    this.filter2.connect(this.out2);
+    this.filter1.connect(this.parallel);
+    this.parallel.connect(this.wetOut)
+    this.filter2.connect(this.wetOut);
 
     this.filter1.connect(this.series);
     this.series.connect(this.filter2);
@@ -816,27 +890,27 @@ class FilterBank {
   }
 
   setLevels(options){
-    if (options.out1 !== undefined) {
-      options.out1 > .5 ? this.out1.gain.value = .5 : this.out1.gain.value = options.out1;
-    }
     if (options.series !== undefined) {
       if (options.series > .5) {
         this.series.gain.value = .5;
       } else {
         this.series.gain.value = options.series;
       }
-      if (this.out1.gain.value + this.series.gain.value > .5) {
-        this.out1.gain.value = .5 - this.series.gain.value;
-      }
+      this.parallel.gain.value = 0.5 - this.series.gain.value;
     }
-    if (options.out2 !== undefined) {
-      options.out2 > .5 ? this.out2.gain.value = .5 + this.series.gain.value : this.out2.gain.value = options.out2 + this.series.gain.value;
+    if (options.wet !== undefined) {
+      if(options.wet > .5) {
+        this.wetOut.gain.value = .5;
+      } else {
+        this.wetOut.gain.value = options.wet;
+      }
+      this.dryOut.gain.value = 0.5 - this.wetOut.gain.value
     }
   }
 
   connect(connection) {
-    this.out2.connect(connection);
-    this.out1.connect(connection);
+    this.wetOut.connect(connection);
+    this.dryOut.connect(connection);
   }
 
 }
@@ -1091,7 +1165,8 @@ class PreMixer {
 
   connect(filters) {
     this.out1.connect(filters.filter1);
-    this.out2.connect(filters.filter2);
+    this.out1.connect(filters.filter2);
+    this.out2.connect(filters.dryOut);
   }
 
 }
