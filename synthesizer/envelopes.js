@@ -6,8 +6,8 @@ class Envelopes {
     this.filterAmt = 1.6;
     this.ampOut = premixer.ampOut.gain;
 
-    this.amp = {attack: .2, release: .2}
-    this.filter = {attack: .6, release: .2}
+    this.amp = {attack: .1, release: .1}
+    this.filter = {attack: .1, release: .1}
 
     this.attack = this.attack.bind(this);
     this.release = this.release.bind(this);

@@ -23,8 +23,8 @@ class Synth {
     this.preMixer = new PreMixer(ctx, this.oscBank);
     this.filters = new Filters(ctx);
 
-    this.startFreq = 400;
     this.envAmt = 1
+    this.startFreq = 400;
     this.endFreq = this.startFreq + (1000 * this.envAmt);
     
     this.envelopes = new Envelopes(ctx, this, this.preMixer, this.filters);

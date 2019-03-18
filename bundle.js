@@ -703,8 +703,8 @@ class Envelopes {
     this.filterAmt = 1.6;
     this.ampOut = premixer.ampOut.gain;
 
-    this.amp = {attack: .2, release: .2}
-    this.filter = {attack: .6, release: .2}
+    this.amp = {attack: .1, release: .1}
+    this.filter = {attack: .1, release: .1}
 
     this.attack = this.attack.bind(this);
     this.release = this.release.bind(this);
@@ -1218,8 +1218,8 @@ class Synth {
     this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank);
     this.filters = new _filters__WEBPACK_IMPORTED_MODULE_3__["default"](ctx);
 
-    this.startFreq = 400;
     this.envAmt = 1
+    this.startFreq = 400;
     this.endFreq = this.startFreq + (1000 * this.envAmt);
     
     this.envelopes = new _envelopes__WEBPACK_IMPORTED_MODULE_5__["default"](ctx, this, this.preMixer, this.filters);

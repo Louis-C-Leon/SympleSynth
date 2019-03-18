@@ -177,6 +177,49 @@ html {
   grid-row-end: 3;
 }
 
+#envelopeControls {
+  grid-column-start: 5;
+  grid-column-end: 6;
+  grid-row-start: 1;
+  grid-row-end: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  place-self: center;
+}
+
+#envelopeSliderContainer {
+  transform: rotate(-90deg);
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+#envelopeCheckbox {
+  display: none;
+}
+
+.toggleSwitch {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 5px;
+  background-color: black;
+  border-radius: 5px;
+}
+
+.slider {
+  position: absolute;
+  cursor:pointer;
+  transition:
+}
+
+.envelopeInputSlider {
+  margin: 5px;
+}
+
 .keyboard {
   grid-column-start: 2;
   grid-column-end: 5;
