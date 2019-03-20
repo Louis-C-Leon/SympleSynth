@@ -111,7 +111,7 @@ class Keyboard {
       let func = this.playNote("C2");
       func();
     })
-    B.addEventListener("mouseup", this.synth.stop)
+    C2.addEventListener("mouseup", this.synth.stop)
 
     const Cs2 = document.getElementById("Cs2")
     Cs2.addEventListener("mousedown", (e) => {
@@ -219,15 +219,16 @@ class Keyboard {
 
   playNote(note) {
     if (note.search("2") === -1) {
-      let notePlay = note + this.synth.octave;
+      let currNote = note + this.synth.octave;
       return(() => {
-        this.synth.playNote(notePlay);
+        this.synth.playNote(currNote);
       })
     } else {
+
       note = note.slice(0, note.length - 1);
-      let notePlay = note + (parseInt(this.synth.octave) + 1);
+      let currNote = note + (parseInt(this.synth.octave) + 1);
       return(() => {
-        this.synth.playNote(notePlay);
+        this.synth.playNote(currNote);
       })
     }
   }

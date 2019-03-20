@@ -5,19 +5,22 @@ function visualize(synth) {
 
   synth.analyzer.fftSize = 2048;
 
-  const length = synth.analyzer.frequencyBinCount;
-  const data = new Uint8Array(length);
+  let length = synth.analyzer.frequencyBinCount;
+  let data = new Uint8Array(length);
 
   return function draw() { 
+    length = synth.analyzer.frequencyBinCount;
+    data = new Uint8Array(length);
+    
     let visual = requestAnimationFrame(draw);
 
     synth.analyzer.getByteTimeDomainData(data);
 
-    ctx.fillStyle = 'rgb(0, 0, 0)';
+    ctx.fillStyle = 'rgb(0,0,0)';
     ctx.fillRect(0,0, canvas.width, canvas.height);
 
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgb(100, 255, 100)';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgb(50, 255, 50)';
     ctx.beginPath();
 
     let sliceWidth = canvas.width / length;

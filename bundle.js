@@ -330,7 +330,7 @@ class Keyboard {
       let func = this.playNote("C2");
       func();
     })
-    B.addEventListener("mouseup", this.synth.stop)
+    C2.addEventListener("mouseup", this.synth.stop)
 
     const Cs2 = document.getElementById("Cs2")
     Cs2.addEventListener("mousedown", (e) => {
@@ -438,15 +438,16 @@ class Keyboard {
 
   playNote(note) {
     if (note.search("2") === -1) {
-      let notePlay = note + this.synth.octave;
+      let currNote = note + this.synth.octave;
       return(() => {
-        this.synth.playNote(notePlay);
+        this.synth.playNote(currNote);
       })
     } else {
+
       note = note.slice(0, note.length - 1);
-      let notePlay = note + (parseInt(this.synth.octave) + 1);
+      let currNote = note + (parseInt(this.synth.octave) + 1);
       return(() => {
-        this.synth.playNote(notePlay);
+        this.synth.playNote(currNote);
       })
     }
   }
@@ -599,19 +600,22 @@ function visualize(synth) {
 
   synth.analyzer.fftSize = 2048;
 
-  const length = synth.analyzer.frequencyBinCount;
-  const data = new Uint8Array(length);
+  let length = synth.analyzer.frequencyBinCount;
+  let data = new Uint8Array(length);
 
   return function draw() { 
+    length = synth.analyzer.frequencyBinCount;
+    data = new Uint8Array(length);
+    
     let visual = requestAnimationFrame(draw);
 
     synth.analyzer.getByteTimeDomainData(data);
 
-    ctx.fillStyle = 'rgb(0, 0, 0)';
+    ctx.fillStyle = 'rgb(0,0,0)';
     ctx.fillRect(0,0, canvas.width, canvas.height);
 
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgb(100, 255, 100)';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgb(50, 255, 50)';
     ctx.beginPath();
 
     let sliceWidth = canvas.width / length;
@@ -699,8 +703,8 @@ class Envelopes {
   constructor(ctx, synth, premixer, filters) {
     this.context = ctx;
     this.synth = synth;
+
     this.filters = [filters.filter1.frequency, filters.filter2.frequency];
-    this.filterAmt = 1.6;
     this.ampOut = premixer.ampOut.gain;
 
     this.amp = {attack: .1, release: .1}
@@ -709,8 +713,7 @@ class Envelopes {
     this.attack = this.attack.bind(this);
     this.release = this.release.bind(this);
 
-    this.stepInterval = null;
-    this.checkInterval = null;
+    this.interval = null;
   }
 
   setAmpEnvelope(options) {
@@ -735,99 +738,91 @@ class Envelopes {
 
     let filterStepSize;
     if(this.filter.attack <= 0) {
-      filterStepSize = this.synth.endFreq - this.synth.startFreq;
+      filterStepSize = this.synth.endFreq1 - this.synth.startFreq1;
     } else {
-      filterStepSize = (this.synth.endFreq - this.synth.startFreq) / (this.filter.attack * 1000 / 10)
+      filterStepSize = (this.synth.endFreq1 - this.synth.startFreq1) / (this.filter.attack * 1000 / 10)
     }
 
-
-    if (this.stepInterval === null) {
-      this.stepInterval = setInterval(function(){
-        this.step(ampStepSize, filterStepSize, this.synth.endFreq, 1)}.bind(this), 10);
-
-      this.checkInterval = setInterval(function(){
-        this.check(1, this.synth.endFreq, "play")}.bind(this), 10);
-    } else {
-      clearInterval(this.stepInterval);
-      clearInterval(this.checkInterval)
-      this.stepInterval = null;
-      this.checkInterval = null;
-      console.log("clearing!");
-
-      this.stepInterval = setInterval(function(){
-        this.step(ampStepSize, filterStepSize, this.synth.endFreq, 1)}.bind(this), 10);
-
-      this.checkInterval = setInterval(function(){
-        this.check(1, this.synth.endFreq, "play")}.bind(this), 10);
+    if(this.interval !== null) {
+      clearInterval(this.interval);
+      this.interval = null;
     }
-    // if (this.checkInterval !== null) {
-    //   clearInterval(this.checkInterval);
-    //   this.checkInterval = null;
-    // }
 
-    // console.log(this.filterSustain);
-
-    // this.stepInterval = setInterval(function(){
-    //   this.step(ampStepSize, filterStepSize, filterTarget, 1)}.bind(this), 10);
-    
-    // this.checkInterval = setInterval(function(){
-    //   this.check(1, filterTarget, "play")}.bind(this), 10);
+    this.interval = setInterval(function() {
+      this.attackInterval(ampStepSize, filterStepSize);
+    }.bind(this), 10);
   }
 
   release() {
-      let ampStepSize;
-      if(this.amp.release <= 0) {
-        ampStepSize = 0 - (this.ampOut.value);
-      } else { 
-        ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 5))
-      }
+    let ampStepSize;
+    if(this.amp.release <= 0) {
+      ampStepSize = 0 - (this.ampOut.value);
+    } else { 
+      ampStepSize = 0 - (this.ampOut.value / (this.amp.release * 1000 / 10))
+    }
 
-      let filterStepSize;
-      if(this.filter.attack <= 0) {
-        filterStepSize = this.synth.startFreq - this.synth.endFreq
-      } else {
-        filterStepSize = (this.synth.startFreq - this.synth.endFreq) / (this.filter.attack * 1000 / 5)
-      }
+    let filterStepSize;
+    if(this.filter.attack <= 0) {
+      filterStepSize = this.synth.startFreq1 - this.filters[0].value;
+    } else {
+      filterStepSize = (this.synth.startFreq1 - this.filters[0].value) / (this.filter.attack * 1000 / 10)
+    }
 
-      if (this.stepInterval !== null) {
-        clearInterval(this.stepInterval);
-        this.stepInterval = null;
-        console.log("clearing!")
-      }
-      if (this.checkInterval !== null) {
-        clearInterval(this.checkInterval);
-        this.checkInterval = null;
-      }
+    if(this.interval !== null) {
+      clearInterval(this.interval);
+      this.interval = null;
+    }
 
-      console.log(this.filterOrigin);
-      this.stepInterval = setInterval(function(){
-        this.step(ampStepSize, filterStepSize, this.synth.startFreq, 0)}.bind(this), 10);
-
-      this.checkInterval = setInterval(function(){
-        this.check(0, this.synth.startFreq, "pause")}.bind(this), 10);
+    this.interval = setInterval(function() {
+      this.decayInterval(ampStepSize, filterStepSize)
+    }.bind(this), 10);
   }
 
-  step(ampStep, filterStep, filter1Target, ampTarget) {
-    if (Math.abs(this.ampOut.value - ampTarget) > .001) {
-      this.ampOut.value = this.ampOut.value + ampStep;
+  attackInterval(ampStep, filterStep) {
+    //Increment param values if needed
+    if (this.filters[0].value < this.synth.endFreq1) {
+      this.filters[0].value += filterStep;
     }
-    if (Math.abs(this.filters[0].value - filter1Target) > 5) {
-      this.filters[0].value = this.filters[0].value + filterStep;
-      this.filters[1].value = this.filters[1].value + filterStep;
+    if (this.filters[1].value < this.synth.endFreq2) {
+      this.filters[1].value += filterStep;
+    }
+    if (this.ampOut.value < 1) {
+      this.ampOut.value += ampStep;
+    }
+
+    // debugger;
+    //Clear the interval if the attack is complete
+    if (Math.abs(this.filters[0].value - this.synth.endFreq1) < 5 &&
+        Math.abs(this.filters[1].value - this.synth.endFreq2) < 5 &&
+        Math.abs(this.ampOut.value - 1) < .01) {
+          console.log("clear!")
+          clearInterval(this.interval);
+          this.interval = null;
     }
   }
 
-  check(ampTarget, filter1Target, state) {
-    if((Math.abs(this.ampOut.value - ampTarget) <= .001 &&
-      Math.abs(this.filters[0].value - filter1Target) <= 5) ||
-      this.synth.state !== state ||
-      this.ampOut.value > 1) {
-        console.log("clearing!")
-        clearInterval(this.stepInterval);
-        clearInterval(this.checkInterval);
-        this.stepInterval = null;
-        this.clearInterval = null;
+  decayInterval(ampStep, filterStep) {
+    //Increment param values if needed
+    if (this.filters[0].value > this.synth.startFreq1) {
+      this.filters[0].value += filterStep;
     }
+    if (this.filters[1].value > this.synth.startFreq2) {
+      this.filters[1].value += filterStep;
+    }
+    if (this.ampOut.value > 0) {
+      this.ampOut.value += ampStep;
+    }
+
+    // debugger;
+    //Clear the interval if the attack is complete
+    if (Math.abs(this.filters[0].value - this.synth.startFreq1) < 5 &&
+        Math.abs(this.filters[1].value - this.synth.startFreq2) < 5 &&
+        this.ampOut.value < .01) {
+          console.log("clear!")
+          clearInterval(this.interval);
+          this.interval = null;
+    }
+
   }
 }
 
@@ -1204,7 +1199,7 @@ __webpack_require__.r(__webpack_exports__);
 class Synth {
 
   constructor(ctx) {
-    this.state = "stop";
+    this.state = "pause";
 
     this.context = ctx;
     this.semitone = Math.pow(2, 1/12);
@@ -1218,10 +1213,13 @@ class Synth {
     this.preMixer = new _pre_mixer__WEBPACK_IMPORTED_MODULE_2__["default"](ctx, this.oscBank);
     this.filters = new _filters__WEBPACK_IMPORTED_MODULE_3__["default"](ctx);
 
+    // Store start and end filter frequencies for use by the envelopes
     this.envAmt = 1
-    this.startFreq = 400;
-    this.endFreq = this.startFreq + (1000 * this.envAmt);
-    
+    this.startFreq1 = 400;
+    this.endFreq1 = this.startFreq1 + (1000 * this.envAmt);
+    this.startFreq2 = 400;
+    this.endFreq2 = this.startFreq2 + (1000 * this.envAmt);
+
     this.envelopes = new _envelopes__WEBPACK_IMPORTED_MODULE_5__["default"](ctx, this, this.preMixer, this.filters);
     this.preMixer.connect(this.filters);
 
@@ -1252,9 +1250,13 @@ class Synth {
     if (options.filter1 !== undefined) {
       let f1options = options.filter1;
       if(f1options.frequency !== undefined) {
-        console.log(f1options.frequency)
-        this.masterFreq = f1options.frequency;
-        this.filters.setFrequency(0, f1options.frequency);
+        this.startFreq1 = parseInt(f1options.frequency);
+        this.endFreq1 = this.startFreq1 + (1000 * this.envAmt);
+        if (this.state === "play") {
+          this.filters.setFrequency(1, this.endFreq1);
+        } else {
+          this.filters.setFrequency(1, this.startFreq1);
+        }
       }
       if(f1options.Q !== undefined ) {
         this.filters.setQ(0, f1options.Q)
@@ -1267,7 +1269,13 @@ class Synth {
     if (options.filter2 !== undefined) {
       let f2options = options.filter2;
       if(f2options.frequency !== undefined) {
-        this.filters.setFrequency(1, f2options.frequency);
+        this.startFreq2 = parseInt(f2options.frequency);
+        this.endFreq2 = this.startFreq2 + (1000 * this.envAmt);
+        if (this.state === "play") {
+          this.filters.setFrequency(1, this.endFreq2);
+        } else {
+          this.filters.setFrequency(1, this.startFreq2)
+        }
       }
       if(f2options.Q !== undefined ) {
         this.filters.setQ(1, f2options.Q)

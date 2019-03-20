@@ -9,7 +9,7 @@ import MasterMix from './master_mixer';
 class Synth {
 
   constructor(ctx) {
-    this.state = "stop";
+    this.state = "pause";
 
     this.context = ctx;
     this.semitone = Math.pow(2, 1/12);
@@ -23,10 +23,13 @@ class Synth {
     this.preMixer = new PreMixer(ctx, this.oscBank);
     this.filters = new Filters(ctx);
 
+    // Store start and end filter frequencies for use by the envelopes
     this.envAmt = 1
-    this.startFreq = 400;
-    this.endFreq = this.startFreq + (1000 * this.envAmt);
-    
+    this.startFreq1 = 400;
+    this.endFreq1 = this.startFreq1 + (1000 * this.envAmt);
+    this.startFreq2 = 400;
+    this.endFreq2 = this.startFreq2 + (1000 * this.envAmt);
+
     this.envelopes = new Envelopes(ctx, this, this.preMixer, this.filters);
     this.preMixer.connect(this.filters);
 
@@ -57,9 +60,13 @@ class Synth {
     if (options.filter1 !== undefined) {
       let f1options = options.filter1;
       if(f1options.frequency !== undefined) {
-        console.log(f1options.frequency)
-        this.masterFreq = f1options.frequency;
-        this.filters.setFrequency(0, f1options.frequency);
+        this.startFreq1 = parseInt(f1options.frequency);
+        this.endFreq1 = this.startFreq1 + (1000 * this.envAmt);
+        if (this.state === "play") {
+          this.filters.setFrequency(1, this.endFreq1);
+        } else {
+          this.filters.setFrequency(1, this.startFreq1);
+        }
       }
       if(f1options.Q !== undefined ) {
         this.filters.setQ(0, f1options.Q)
@@ -72,7 +79,13 @@ class Synth {
     if (options.filter2 !== undefined) {
       let f2options = options.filter2;
       if(f2options.frequency !== undefined) {
-        this.filters.setFrequency(1, f2options.frequency);
+        this.startFreq2 = parseInt(f2options.frequency);
+        this.endFreq2 = this.startFreq2 + (1000 * this.envAmt);
+        if (this.state === "play") {
+          this.filters.setFrequency(1, this.endFreq2);
+        } else {
+          this.filters.setFrequency(1, this.startFreq2)
+        }
       }
       if(f2options.Q !== undefined ) {
         this.filters.setQ(1, f2options.Q)
