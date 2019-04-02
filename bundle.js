@@ -365,6 +365,7 @@ class Keyboard {
     E2.addEventListener("mouseup", this.synth.stop)
 
     document.addEventListener("keydown", (e) => {
+      console.log("down")
       const key = e.key.toLowerCase();
       if (key === "a") {
         let func = this.playNote("C")
@@ -434,6 +435,7 @@ class Keyboard {
 
     Object(_osc_controls__WEBPACK_IMPORTED_MODULE_0__["default"])(this.synth);
     Object(_filter_controls__WEBPACK_IMPORTED_MODULE_1__["default"])(this.synth);
+
   }
 
   playNote(note) {
@@ -641,6 +643,35 @@ function visualize(synth) {
 
 /***/ }),
 
+/***/ "./synthesizer/LFO.js":
+/*!****************************!*\
+  !*** ./synthesizer/LFO.js ***!
+  \****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class LFO {
+  constructor(ctx, synth) {
+    this.lfo = ctx.createOscillator();
+    this.lfo.frequency.value = 1.0;
+    this.modAmmt = ctx.createGain();
+    this.modAmmt.gain.value = 50;
+    this.param = synth.master.volume.gain
+
+    this.lfo.connect(this.modAmmt);
+    this.modAmmt.connect(this.param);
+    // debugger;
+  }
+
+
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (LFO);
+
+/***/ }),
+
 /***/ "./synthesizer/effects.js":
 /*!********************************!*\
   !*** ./synthesizer/effects.js ***!
@@ -661,10 +692,18 @@ class Effects {
     filterBank.connect(this.premixer.wet);
 
     this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
-    this.reverb = new ConvolverNode(ctx);
+    this.reverb = ctx.createConvolver();
 
     this.premixer.wet.connect(this.distortion);
+    // this.premixer.wet.connect(this.reverb);
+    // this.toggleEffect = this.toggleEffect.bind(this);
   }
+
+  // toggleEffect(name) {
+  //   return function() {
+      
+  //   }
+  // }
 
   makeDistortionCurve(amount) {
     const k = amount
@@ -681,6 +720,7 @@ class Effects {
 
   connect(connection) {
     this.distortion.connect(connection);
+    // this.reverb.connect(connection);
     this.premixer.dry.connect(connection);
   }
 
@@ -795,7 +835,6 @@ class Envelopes {
     if (Math.abs(this.filters[0].value - this.synth.endFreq1) < 5 &&
         Math.abs(this.filters[1].value - this.synth.endFreq2) < 5 &&
         Math.abs(this.ampOut.value - 1) < .01) {
-          console.log("clear!")
           clearInterval(this.interval);
           this.interval = null;
     }
@@ -818,7 +857,6 @@ class Envelopes {
     if (Math.abs(this.filters[0].value - this.synth.startFreq1) < 5 &&
         Math.abs(this.filters[1].value - this.synth.startFreq2) < 5 &&
         this.ampOut.value < .01) {
-          console.log("clear!")
           clearInterval(this.interval);
           this.interval = null;
     }
@@ -1188,6 +1226,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _effects__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./effects */ "./synthesizer/effects.js");
 /* harmony import */ var _envelopes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./envelopes */ "./synthesizer/envelopes.js");
 /* harmony import */ var _master_mixer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./master_mixer */ "./synthesizer/master_mixer.js");
+/* harmony import */ var _LFO__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./LFO */ "./synthesizer/LFO.js");
+
 
 
 
@@ -1225,13 +1265,14 @@ class Synth {
 
     this.effects = new _effects__WEBPACK_IMPORTED_MODULE_4__["default"](ctx, this.filters);
     this.analyzer = ctx.createAnalyser();
-
     this.master = new _master_mixer__WEBPACK_IMPORTED_MODULE_6__["default"](ctx, this.effects);
 
     this.master.connect(this.analyzer);
     this.analyzer.connect(ctx.destination);
 
     this.stop = this.stop.bind(this);
+
+    this.lfo = new _LFO__WEBPACK_IMPORTED_MODULE_7__["default"](ctx, this);f
   }
 
   preMix(options) {

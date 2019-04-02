@@ -9,10 +9,18 @@ class Effects {
     filterBank.connect(this.premixer.wet);
 
     this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
-    this.reverb = new ConvolverNode(ctx);
+    this.reverb = ctx.createConvolver();
 
     this.premixer.wet.connect(this.distortion);
+    // this.premixer.wet.connect(this.reverb);
+    // this.toggleEffect = this.toggleEffect.bind(this);
   }
+
+  // toggleEffect(name) {
+  //   return function() {
+      
+  //   }
+  // }
 
   makeDistortionCurve(amount) {
     const k = amount
@@ -29,6 +37,7 @@ class Effects {
 
   connect(connection) {
     this.distortion.connect(connection);
+    // this.reverb.connect(connection);
     this.premixer.dry.connect(connection);
   }
 

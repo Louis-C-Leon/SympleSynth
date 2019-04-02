@@ -5,6 +5,7 @@ import Filters from './filters';
 import Effects from './effects';
 import Envelopes from './envelopes';
 import MasterMix from './master_mixer';
+import LFO from './LFO';
 
 class Synth {
 
@@ -35,13 +36,14 @@ class Synth {
 
     this.effects = new Effects(ctx, this.filters);
     this.analyzer = ctx.createAnalyser();
-
     this.master = new MasterMix(ctx, this.effects);
 
     this.master.connect(this.analyzer);
     this.analyzer.connect(ctx.destination);
 
     this.stop = this.stop.bind(this);
+
+    this.lfo = new LFO(ctx, this);f
   }
 
   preMix(options) {

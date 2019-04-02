@@ -94,7 +94,6 @@ class Envelopes {
     if (Math.abs(this.filters[0].value - this.synth.endFreq1) < 5 &&
         Math.abs(this.filters[1].value - this.synth.endFreq2) < 5 &&
         Math.abs(this.ampOut.value - 1) < .01) {
-          console.log("clear!")
           clearInterval(this.interval);
           this.interval = null;
     }
@@ -117,7 +116,6 @@ class Envelopes {
     if (Math.abs(this.filters[0].value - this.synth.startFreq1) < 5 &&
         Math.abs(this.filters[1].value - this.synth.startFreq2) < 5 &&
         this.ampOut.value < .01) {
-          console.log("clear!")
           clearInterval(this.interval);
           this.interval = null;
     }
