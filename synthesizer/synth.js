@@ -43,7 +43,7 @@ class Synth {
 
     this.stop = this.stop.bind(this);
 
-    this.lfo = new LFO(ctx, this);f
+    this.lfo = new LFO(ctx, this);
   }
 
   preMix(options) {
