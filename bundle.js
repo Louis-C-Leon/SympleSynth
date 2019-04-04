@@ -117,6 +117,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /***/ }),
 
+/***/ "./GUI/effect_controls.js":
+/*!********************************!*\
+  !*** ./GUI/effect_controls.js ***!
+  \********************************/
+/*! exports provided: setupEffectsControls */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setupEffectsControls", function() { return setupEffectsControls; });
+const setupEffectsControls = function(synth) {
+  const distortionToggle = document.getElementById("distortionToggle");
+  const reverbToggle = document.getElementById("reverbToggle");
+
+  distortionToggle.addEventListener("click", function(){
+    distortionToggle.classList.toggle("buttonSelected");
+  }.bind(this));
+
+  reverbToggle.addEventListener("click", function(){
+    reverbToggle.classList.toggle("buttonSelected");
+  }.bind(this));
+}
+
+/***/ }),
+
 /***/ "./GUI/envelope_controls.js":
 /*!**********************************!*\
   !*** ./GUI/envelope_controls.js ***!
@@ -270,6 +295,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _osc_controls__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./osc_controls */ "./GUI/osc_controls.js");
 /* harmony import */ var _filter_controls__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filter_controls */ "./GUI/filter_controls.js");
 /* harmony import */ var _envelope_controls__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./envelope_controls */ "./GUI/envelope_controls.js");
+/* harmony import */ var _effect_controls__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./effect_controls */ "./GUI/effect_controls.js");
 
 
 
@@ -490,6 +516,7 @@ class Keyboard {
 
     Object(_osc_controls__WEBPACK_IMPORTED_MODULE_0__["default"])(this.synth);
     Object(_filter_controls__WEBPACK_IMPORTED_MODULE_1__["default"])(this.synth);
+    Object(_effect_controls__WEBPACK_IMPORTED_MODULE_3__["setupEffectsControls"])(this.synth);
   }
 
   playNote(note) {
@@ -753,21 +780,46 @@ class Effects {
 
   constructor(ctx, filterBank) {
     this.context = ctx;
-    this.premixer = { dry: new GainNode(ctx, {gain: 0}), wet: new GainNode(ctx, {gain: 1})};
+    this.input = new GainNode(ctx);
+    filterBank.connect(this.input);
 
-    //connect filters to master dry/wet mix
-    filterBank.connect(this.premixer.dry);
-    filterBank.connect(this.premixer.wet);
+    this.premixer = { dry: new GainNode(ctx, {gain: .5}), wet: new GainNode(ctx, {gain: .5})};
 
-    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(100), oversample: "4x"});
-    this.reverb = new _reverb__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, {roomSize: .95, dampening: 3000, wetGain: .8, dryGain: .2});
+    this.input.connect(this.premixer.dry);
+    this.input.connect(this.premixer.wet);
+
+    this.toggles = {reverb: true, distortion: true};
+    this.output = new GainNode(ctx);
+
+    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
+    this.reverb = new _reverb__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, {roomSize: .9, dampening: 3000, wetGain: .8, dryGain: .2});
 
     this.premixer.wet.connect(this.distortion);
     this.distortion.connect(this.reverb.input);
-    // this.toggleEffect = this.toggleEffect.bind(this);
+    this.reverb.connect(this.output);
+    this.premixer.dry.connect(this.output);
+
+    this.toggleReverb = this.toggleReverb.bind(this);
+    this.toggleDistortion = this.toggleDistortion.bind(this);
   }
 
+  toggleReverb() {
+    if (this.toggles.reverb) {
+      if (this.toggles.distortion) {
+        this.reverb.disconnect();
+        this.distortion.disconnect();
+        this.distortion.connect(this.output);
+      } else {
 
+      }
+    } else {
+
+    }
+  }
+
+  toggleDistortion() {
+
+  }
 
   makeDistortionCurve(amount) {
     const k = amount
@@ -783,8 +835,7 @@ class Effects {
   }
 
   connect(connection) {
-    this.reverb.connect(connection);
-    this.premixer.dry.connect(connection);
+    this.output.connect(connection);
   }
 
 }
