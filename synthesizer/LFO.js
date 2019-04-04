@@ -9,7 +9,7 @@ class LFO {
 
     this.lfo.start();
     this.lfo.connect(this.modAmmt);
-    this.modAmmt.connect(this.param);
+    // this.modAmmt.connect(this.param);
   }
 
   setMode(mode) {

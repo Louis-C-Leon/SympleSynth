@@ -1,3 +1,4 @@
+import Reverb from "./reverb";
 class Effects {
 
   constructor(ctx, filterBank) {
@@ -9,10 +10,10 @@ class Effects {
     filterBank.connect(this.premixer.wet);
 
     this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
-    this.reverb = ctx.createConvolver();
+    this.reverb = new Reverb(ctx, {roomSize: 1, dampening: 3000, wetGain: .8, dryGain: .2});
 
-    this.premixer.wet.connect(this.distortion);
-    // this.premixer.wet.connect(this.reverb);
+    // this.premixer.wet.connect(this.distortion);
+    this.premixer.wet.connect(this.reverb.input);
     // this.toggleEffect = this.toggleEffect.bind(this);
   }
 
@@ -36,8 +37,8 @@ class Effects {
   }
 
   connect(connection) {
-    this.distortion.connect(connection);
-    // this.reverb.connect(connection);
+    // this.distortion.connect(connection);
+    this.reverb.connect(connection);
     this.premixer.dry.connect(connection);
   }
 
