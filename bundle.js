@@ -699,14 +699,14 @@ class Effects {
 
   constructor(ctx, filterBank) {
     this.context = ctx;
-    this.premixer = { dry: new GainNode(ctx, {gain: .5}), wet: new GainNode(ctx, {gain: .5})};
+    this.premixer = { dry: new GainNode(ctx, {gain: 0}), wet: new GainNode(ctx, {gain: 1})};
 
     //connect filters to master dry/wet mix
     filterBank.connect(this.premixer.dry);
     filterBank.connect(this.premixer.wet);
 
     this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
-    this.reverb = new _reverb__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, {roomSize: 1, dampening: 3000, wetGain: .8, dryGain: .2});
+    this.reverb = new _reverb__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, {roomSize: .99, dampening: 3000, wetGain: .8, dryGain: .2});
 
     // this.premixer.wet.connect(this.distortion);
     this.premixer.wet.connect(this.reverb.input);
@@ -1256,11 +1256,48 @@ class CompositeAudioNode {
   }
 }
 
+// Utility function for controlling multiple audio params as if
+// they were one
+// credit to https://gist.github.com/miselaytes-anton/7d795d6efcc7774b136c2b73dc38ed32
+
+function mergeParams(params){
+  const singleParam = params[0]
+  const parameter = {};
+  const audioNodeMethods = Object.getOwnPropertyNames(AudioParam.prototype)
+  .filter(prop => typeof singleParam[prop] === 'function')
+  
+  audioNodeMethods.forEach(method => {
+      parameter[method] = (...argums) => {
+          const args = Array.prototype.slice.call(argums);
+          params.forEach((param) => {
+              singleParam[method].apply(param, args);
+          })
+          
+      }
+  })
+
+  Object.defineProperties(parameter, {
+      value: {
+        get: function () {
+          return singleParam.value
+        },
+        set: function (value) {
+          params.forEach(param => {
+              param.value = value
+          })
+        }
+      }
+    })
+
+  return parameter;
+}
+
 class LowPassComb extends CompositeAudioNode {
   constructor(ctx, options) {
+    console.log(options)
     super(ctx, options);
-    const {delayTime, gainValue, frequency} = options;
-    this.lowPass = new BiquadFilterNode(ctx, {type: 'lowpass', frequency});
+    const {delayTime, resonance: gainValue, dampening: frequency} = options;
+    this.lowPass = new BiquadFilterNode(ctx, {type: 'lowpass', frequency, Q: -3.0102999566398125});
     this.delay = new DelayNode(ctx, { delayTime });
     this.gain = ctx.createGain();
     this.gain.gain.value = gainValue;
@@ -1270,6 +1307,7 @@ class LowPassComb extends CompositeAudioNode {
       .connect(this.gain)
       .connect(this.input)
       .connect(this.output);
+    console.log(this)
   }
 
   get resonance() {
@@ -1289,9 +1327,9 @@ class Reverb extends CompositeAudioNode {
   constructor(ctx, options) {
     super(ctx, options);
     const {roomSize: resonance, dampening, wetGain, dryGain } = options;
-    const sampleRate = 44100;
+    const SAMPLE_RATE = 44100;
     const COMB_FILTER_TUNINGS = [1557, 1617, 1491, 1422, 1277, 1356, 1188, 1116]
-      .map(delayPerSecond => delayPerSecond / sampleRate);
+      .map(delayPerSecond => delayPerSecond / SAMPLE_RATE);
     const ALLPASS_FREQUENCIES = [225, 556, 441, 341];
 
     this.wet = ctx.createGain()
@@ -1302,11 +1340,11 @@ class Reverb extends CompositeAudioNode {
     this.splitter = ctx.createChannelSplitter(2)
 
     this.combFilters = COMB_FILTER_TUNINGS
-      .map(delayTime => new LowPassComb(ctx, {gainValue: dampening, resonance, delayTime}));
-    const combLeft = this.combFilters.slice(0, 1);
-    const combRight = this.combFilters.slice(7);
+      .map(delayTime => new LowPassComb(ctx, {dampening, resonance, delayTime}));
+    const combLeft = this.combFilters.slice(0, 4);
+    const combRight = this.combFilters.slice(4);
     this.allPassFilters = ALLPASS_FREQUENCIES
-      .map(freq => new BiquadFilterNode(ctx, {type: 'allpass', freq}));
+      .map(frequency => new BiquadFilterNode(ctx, {type: 'allpass', frequency}));
     this.input.connect(this.wet).connect(this.splitter);
     this.input.connect(this.dry).connect(this.output);
 

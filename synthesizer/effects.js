@@ -3,14 +3,14 @@ class Effects {
 
   constructor(ctx, filterBank) {
     this.context = ctx;
-    this.premixer = { dry: new GainNode(ctx, {gain: .5}), wet: new GainNode(ctx, {gain: .5})};
+    this.premixer = { dry: new GainNode(ctx, {gain: 0}), wet: new GainNode(ctx, {gain: 1})};
 
     //connect filters to master dry/wet mix
     filterBank.connect(this.premixer.dry);
     filterBank.connect(this.premixer.wet);
 
     this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
-    this.reverb = new Reverb(ctx, {roomSize: 1, dampening: 3000, wetGain: .8, dryGain: .2});
+    this.reverb = new Reverb(ctx, {roomSize: .99, dampening: 3000, wetGain: .8, dryGain: .2});
 
     // this.premixer.wet.connect(this.distortion);
     this.premixer.wet.connect(this.reverb.input);
