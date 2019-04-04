@@ -44,7 +44,7 @@ class Synth {
     this.stop = this.stop.bind(this);
 
     this.lfo = new LFO(ctx, this);
-    
+
     this.toggleEffect = this.toggleEffect.bind(this);
   }
 
@@ -141,6 +141,10 @@ class Synth {
     } else {
       this.effects.toggleReverb();
     }
+  }
+
+  setEffectsOptions(options) {
+    this.effects.setOptions(options);
   }
 
   setWaveform(options) {

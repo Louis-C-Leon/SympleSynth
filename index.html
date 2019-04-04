@@ -96,12 +96,20 @@
         </div>
 
         <div class="effectsControls" id="effectsControls">
-          <div class="distortionControls">
-            <div class="selectButton buttonSelected" id="distortionToggle">Distortion</div>
+          <div class="effectsModules">
+            <div class="distortionControls">
+              <div class="selectButton buttonSelected" id="distortionToggle">Distortion</div>
+              <input type="range" min="0" max="1" step="0.05" id="distortionAmmt"
+                class="inputSlider effectsInputSlider" value="1">
+            </div>
+            <div class="reverbControls">
+              <div class="selectButton buttonSelected" id="reverbToggle">Reverb</div>
+              <input type="range" min=".5" max="1" step="0.02" id="reverbAmmt"
+                class="inputSlider effectsInputSlider" value="1">
+            </div>
           </div>
-          <div class="reverbControls">
-            <div class="selectButton buttonSelected" id="reverbToggle">Reverb</div>
-          </div>
+          <input type="range" min="0" max="1" step="0.05" id="effectsMix"
+            class="inputSlider effectsInputSlider" value="1">
         </div>
 
         <div class="envelopeControls" id="envelopeControls">

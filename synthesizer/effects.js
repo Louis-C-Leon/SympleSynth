@@ -76,6 +76,20 @@ class Effects {
     }
   }
 
+  setOptions(options) {
+    if (options.distortion !== undefined) {
+      this.distortion.curve = this.makeDistortionCurve(100 * options.distortion)
+    }
+    if (options.reverb !== undefined) {
+      let reverbAmmt = this.reverb.roomSize;
+      reverbAmmt.value = options.reverb / 1.01;
+    }
+    if (options.mix !== undefined) {
+      this.premixer.wet.gain.value = options.mix;
+      this.premixer.dry.gain.value = 1 - options.mix;
+    }
+  }
+
   makeDistortionCurve(amount) {
     const k = amount
     const numSamples = 4410;

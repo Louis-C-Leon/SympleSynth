@@ -28,7 +28,6 @@ class Envelopes {
   }
 
   attack() {
-    console.log(this.amp, this.filter)
     let ampStepSize;
     if(this.amp.attack <= 0) {
       ampStepSize = 1;

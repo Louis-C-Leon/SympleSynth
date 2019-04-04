@@ -130,6 +130,9 @@ __webpack_require__.r(__webpack_exports__);
 const setupEffectsControls = function(synth) {
   const distortionToggle = document.getElementById("distortionToggle");
   const reverbToggle = document.getElementById("reverbToggle");
+  const distortionAmmt = document.getElementById("distortionAmmt");
+  const reverbAmmt = document.getElementById("reverbAmmt");
+  const effectsMix = document.getElementById("effectsMix");
 
   distortionToggle.addEventListener("click", function(){
     distortionToggle.classList.toggle("buttonSelected");
@@ -140,6 +143,19 @@ const setupEffectsControls = function(synth) {
     reverbToggle.classList.toggle("buttonSelected");
     synth.toggleEffect("reverb")
   });
+
+  distortionAmmt.addEventListener("input", function(e) {
+    synth.setEffectsOptions({distortion: parseFloat(e.target.value)})
+  });
+
+  reverbAmmt.addEventListener("input", function(e) {
+    synth.setEffectsOptions({reverb: parseFloat(e.target.value)})
+  });
+
+  effectsMix.addEventListener("input", function(e) {
+    synth.setEffectsOptions({mix: parseFloat(e.target.value)})
+  })
+
 }
 
 /***/ }),
@@ -448,7 +464,6 @@ class Keyboard {
     E2.addEventListener("mouseup", this.synth.stop)
 
     document.addEventListener("keydown", (e) => {
-      console.log("down")
       const key = e.key.toLowerCase();
       if (key === "a") {
         let func = this.playNote("C")
@@ -855,6 +870,20 @@ class Effects {
     }
   }
 
+  setOptions(options) {
+    if (options.distortion !== undefined) {
+      this.distortion.curve = this.makeDistortionCurve(100 * options.distortion)
+    }
+    if (options.reverb !== undefined) {
+      let reverbAmmt = this.reverb.roomSize;
+      reverbAmmt.value = options.reverb / 1.01;
+    }
+    if (options.mix !== undefined) {
+      this.premixer.wet.gain.value = options.mix;
+      this.premixer.dry.gain.value = 1 - options.mix;
+    }
+  }
+
   makeDistortionCurve(amount) {
     const k = amount
     const numSamples = 4410;
@@ -917,7 +946,6 @@ class Envelopes {
   }
 
   attack() {
-    console.log(this.amp, this.filter)
     let ampStepSize;
     if(this.amp.attack <= 0) {
       ampStepSize = 1;
@@ -1429,7 +1457,6 @@ function mergeParams(params){
 
 class LowPassComb extends CompositeAudioNode {
   constructor(ctx, options) {
-    console.log(options)
     super(ctx, options);
     const {delayTime, resonance: gainValue, dampening: frequency} = options;
     this.lowPass = new BiquadFilterNode(ctx, {type: 'lowpass', frequency, Q: -3.0102999566398125});
@@ -1442,7 +1469,6 @@ class LowPassComb extends CompositeAudioNode {
       .connect(this.gain)
       .connect(this.input)
       .connect(this.output);
-    console.log(this)
   }
 
   get resonance() {
@@ -1580,7 +1606,7 @@ class Synth {
     this.stop = this.stop.bind(this);
 
     this.lfo = new _LFO__WEBPACK_IMPORTED_MODULE_7__["default"](ctx, this);
-    
+
     this.toggleEffect = this.toggleEffect.bind(this);
   }
 
@@ -1677,6 +1703,10 @@ class Synth {
     } else {
       this.effects.toggleReverb();
     }
+  }
+
+  setEffectsOptions(options) {
+    this.effects.setOptions(options);
   }
 
   setWaveform(options) {

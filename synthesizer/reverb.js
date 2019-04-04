@@ -59,7 +59,6 @@ function mergeParams(params){
 
 class LowPassComb extends CompositeAudioNode {
   constructor(ctx, options) {
-    console.log(options)
     super(ctx, options);
     const {delayTime, resonance: gainValue, dampening: frequency} = options;
     this.lowPass = new BiquadFilterNode(ctx, {type: 'lowpass', frequency, Q: -3.0102999566398125});
@@ -72,7 +71,6 @@ class LowPassComb extends CompositeAudioNode {
       .connect(this.gain)
       .connect(this.input)
       .connect(this.output);
-    console.log(this)
   }
 
   get resonance() {

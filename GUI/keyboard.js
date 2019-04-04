@@ -148,7 +148,6 @@ class Keyboard {
     E2.addEventListener("mouseup", this.synth.stop)
 
     document.addEventListener("keydown", (e) => {
-      console.log("down")
       const key = e.key.toLowerCase();
       if (key === "a") {
         let func = this.playNote("C")
