@@ -117,6 +117,58 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /***/ }),
 
+/***/ "./GUI/envelope_controls.js":
+/*!**********************************!*\
+  !*** ./GUI/envelope_controls.js ***!
+  \**********************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class EnvelopeControls {
+  constructor(synth) {
+    this.synth = synth;
+    this.mode = "amp"
+    this.envAttack = document.getElementById("envelopeAttack");
+    this.envRelease = document.getElementById("envelopeRelease");
+    this.filterButton = document.getElementById("envelopeFilter");
+    this.ampButton  = document.getElementById("envelopeAmp");
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
+
+    this.envAttack.addEventListener("input", function(e){
+      this.synth.setEnvelope({type: this.mode, attack: parseFloat(e.target.value)})
+    }.bind(this))
+
+    this.envRelease.addEventListener("input", function(e){
+      this.synth.setEnvelope({type: this.mode, release: parseFloat(e.target.value)})
+    }.bind(this))
+
+    this.filterButton.addEventListener("click", function(e) {
+      this.mode = "filter";
+      this.envAttack.value = this.synth.envelopes.filter.attack;
+      this.envRelease.value = this.synth.envelopes.filter.release;
+      this.filterButton.classList.toggle("buttonSelected");
+      this.ampButton.classList.toggle("buttonSelected");
+    }.bind(this));
+
+    this.ampButton.addEventListener("click", function(e) {
+      this.mode = "amp";
+      this.envAttack.value = this.synth.envelopes.amp.attack;
+      this.envRelease.value = this.synth.envelopes.amp.release;
+      this.filterButton.classList.toggle("buttonSelected");
+      this.ampButton.classList.toggle("buttonSelected");
+    }.bind(this));
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (EnvelopeControls);
+
+/***/ }),
+
 /***/ "./GUI/filter_controls.js":
 /*!********************************!*\
   !*** ./GUI/filter_controls.js ***!
@@ -217,6 +269,8 @@ function setupFilterControls(synth) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _osc_controls__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./osc_controls */ "./GUI/osc_controls.js");
 /* harmony import */ var _filter_controls__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filter_controls */ "./GUI/filter_controls.js");
+/* harmony import */ var _envelope_controls__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./envelope_controls */ "./GUI/envelope_controls.js");
+
 
 
 
@@ -225,6 +279,7 @@ class Keyboard {
     this.synth = synth;
     this.playNote = this.playNote.bind(this);
     this.setupEventListeners();
+    this.envelopeControls = new _envelope_controls__WEBPACK_IMPORTED_MODULE_2__["default"](synth);
   }
 
   setupEventListeners() {
@@ -435,7 +490,6 @@ class Keyboard {
 
     Object(_osc_controls__WEBPACK_IMPORTED_MODULE_0__["default"])(this.synth);
     Object(_filter_controls__WEBPACK_IMPORTED_MODULE_1__["default"])(this.synth);
-
   }
 
   playNote(note) {
@@ -706,18 +760,12 @@ class Effects {
     filterBank.connect(this.premixer.wet);
 
     this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
-    this.reverb = new _reverb__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, {roomSize: .99, dampening: 3000, wetGain: .8, dryGain: .2});
+    this.reverb = new _reverb__WEBPACK_IMPORTED_MODULE_0__["default"](ctx, {roomSize: .95, dampening: 3000, wetGain: .8, dryGain: .2});
 
     // this.premixer.wet.connect(this.distortion);
     this.premixer.wet.connect(this.reverb.input);
     // this.toggleEffect = this.toggleEffect.bind(this);
   }
-
-  // toggleEffect(name) {
-  //   return function() {
-      
-  //   }
-  // }
 
   makeDistortionCurve(amount) {
     const k = amount
@@ -772,17 +820,18 @@ class Envelopes {
 
   setAmpEnvelope(options) {
     Object.keys(options).forEach( (param) => {
-      this.amp[param] = options.param;
+      this.amp[param] = options[param];
     });
   }
 
   setFilterEnvelope(options) {
     Object.keys(options).forEach( (param) => {
-      this.amp[param] = options.param;
+      this.filter[param] = options[param];
     });
   }
 
   attack() {
+    console.log(this.amp, this.filter)
     let ampStepSize;
     if(this.amp.attack <= 0) {
       ampStepSize = 1;
@@ -1500,6 +1549,14 @@ class Synth {
 
   setFilterLevels(options) {
     this.filters.setLevels(options);
+  }
+
+  setEnvelope(options) {
+    if (options.type === "amp") {
+      this.envelopes.setAmpEnvelope(options);
+    } else {
+      this.envelopes.setFilterEnvelope(options);
+    }
   }
 
   playFreq(freq) {

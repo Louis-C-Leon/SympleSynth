@@ -103,6 +103,14 @@ class Synth {
     this.filters.setLevels(options);
   }
 
+  setEnvelope(options) {
+    if (options.type === "amp") {
+      this.envelopes.setAmpEnvelope(options);
+    } else {
+      this.envelopes.setFilterEnvelope(options);
+    }
+  }
+
   playFreq(freq) {
     this.state = "play";
     if (this.context.state === "suspended") {

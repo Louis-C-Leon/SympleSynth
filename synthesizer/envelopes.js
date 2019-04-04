@@ -17,17 +17,18 @@ class Envelopes {
 
   setAmpEnvelope(options) {
     Object.keys(options).forEach( (param) => {
-      this.amp[param] = options.param;
+      this.amp[param] = options[param];
     });
   }
 
   setFilterEnvelope(options) {
     Object.keys(options).forEach( (param) => {
-      this.amp[param] = options.param;
+      this.filter[param] = options[param];
     });
   }
 
   attack() {
+    console.log(this.amp, this.filter)
     let ampStepSize;
     if(this.amp.attack <= 0) {
       ampStepSize = 1;

@@ -1,11 +1,13 @@
 import setupOscControls from './osc_controls';
 import setupFilterControls from './filter_controls';
+import EnvelopeControls from './envelope_controls';
 
 class Keyboard {
   constructor(synth) {
     this.synth = synth;
     this.playNote = this.playNote.bind(this);
     this.setupEventListeners();
+    this.envelopeControls = new EnvelopeControls(synth);
   }
 
   setupEventListeners() {
@@ -216,7 +218,6 @@ class Keyboard {
 
     setupOscControls(this.synth);
     setupFilterControls(this.synth);
-
   }
 
   playNote(note) {
