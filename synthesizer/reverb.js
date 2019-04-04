@@ -125,6 +125,8 @@ class Reverb extends CompositeAudioNode {
       .connect(this.allPassFilters[2])
       .connect(this.allPassFilters[3])
       .connect(this.output);
+
+    this.output.gain.value = .3;
   }
 
   get wetGain() {

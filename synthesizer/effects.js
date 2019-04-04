@@ -9,13 +9,15 @@ class Effects {
     filterBank.connect(this.premixer.dry);
     filterBank.connect(this.premixer.wet);
 
-    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(0), oversample: "4x"});
+    this.distortion = new WaveShaperNode(ctx, {curve: this.makeDistortionCurve(100), oversample: "4x"});
     this.reverb = new Reverb(ctx, {roomSize: .95, dampening: 3000, wetGain: .8, dryGain: .2});
 
-    // this.premixer.wet.connect(this.distortion);
-    this.premixer.wet.connect(this.reverb.input);
+    this.premixer.wet.connect(this.distortion);
+    this.distortion.connect(this.reverb.input);
     // this.toggleEffect = this.toggleEffect.bind(this);
   }
+
+
 
   makeDistortionCurve(amount) {
     const k = amount
@@ -31,7 +33,6 @@ class Effects {
   }
 
   connect(connection) {
-    // this.distortion.connect(connection);
     this.reverb.connect(connection);
     this.premixer.dry.connect(connection);
   }
