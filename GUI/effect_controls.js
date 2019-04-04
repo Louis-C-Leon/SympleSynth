@@ -4,9 +4,11 @@ export const setupEffectsControls = function(synth) {
 
   distortionToggle.addEventListener("click", function(){
     distortionToggle.classList.toggle("buttonSelected");
+    synth.toggleEffect("distortion");
   }.bind(this));
 
   reverbToggle.addEventListener("click", function(){
     reverbToggle.classList.toggle("buttonSelected");
-  }.bind(this));
+    synth.toggleEffect("reverb")
+  });
 }

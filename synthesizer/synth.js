@@ -44,6 +44,8 @@ class Synth {
     this.stop = this.stop.bind(this);
 
     this.lfo = new LFO(ctx, this);
+    
+    this.toggleEffect = this.toggleEffect.bind(this);
   }
 
   preMix(options) {
@@ -131,6 +133,14 @@ class Synth {
   stop() {
     this.state = "pause"
     this.envelopes.release();
+  }
+
+  toggleEffect(name) {
+    if (name === "distortion") {
+      this.effects.toggleDistortion();
+    } else {
+      this.effects.toggleReverb();
+    }
   }
 
   setWaveform(options) {
