@@ -17,8 +17,8 @@ class LFO {
     } else if (mode === "filter") {
       this.maxAmmt = 10000;
     } else if (mode === "freq") {
-      this.maxAmmt = 100;
-    } else {
+      this.maxAmmt = 25;
+    } else {  
       this.maxAmmt = 0;
     }
     this.modAmmt.disconnect();

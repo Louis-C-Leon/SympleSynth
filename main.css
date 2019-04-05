@@ -10,6 +10,23 @@ body {
   font-family: "Trebuchet MS"
 }
 
+.mainContainer {
+  display: flex;
+  align-items: center;
+}
+
+.textBox {
+  border: 2px solid lightslategray;
+  padding: 7px;
+  margin: 7px;
+  height: 70%;
+  background-color: rgba(255, 255, 255, .7);
+  overflow: scroll;
+  color: black;
+  font-size: 15px;
+}
+
+
 html {
   height: 100%;
 }

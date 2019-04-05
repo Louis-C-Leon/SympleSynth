@@ -843,7 +843,9 @@ function visualize2() {
   let backgroundColor = 'rgb(0, 0, 0)';
 
   return function draw() {
-    let visual = requestAnimationFrame(draw);
+
+    requestAnimationFrame(draw);
+    
     synth.analyser2.getByteFrequencyData(data)
 
     canvas.setAttribute("width", window.outerWidth);
@@ -912,8 +914,8 @@ class LFO {
     } else if (mode === "filter") {
       this.maxAmmt = 10000;
     } else if (mode === "freq") {
-      this.maxAmmt = 100;
-    } else {
+      this.maxAmmt = 25;
+    } else {  
       this.maxAmmt = 0;
     }
     this.modAmmt.disconnect();

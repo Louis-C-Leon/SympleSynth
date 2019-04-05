@@ -68,7 +68,9 @@ export function visualize2() {
   let backgroundColor = 'rgb(0, 0, 0)';
 
   return function draw() {
-    let visual = requestAnimationFrame(draw);
+
+    requestAnimationFrame(draw);
+    
     synth.analyser2.getByteFrequencyData(data)
 
     canvas.setAttribute("width", window.outerWidth);
