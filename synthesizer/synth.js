@@ -37,11 +37,13 @@ class Synth {
     this.preMixer.connect(this.filters);
 
     this.effects = new Effects(ctx, this.filters);
-    this.analyzer = ctx.createAnalyser();
+    this.analyser = ctx.createAnalyser();
+    this.analyser2 = ctx.createAnalyser();
     this.master = new MasterMix(ctx, this.effects);
 
-    this.master.connect(this.analyzer);
-    this.analyzer.connect(ctx.destination);
+    this.master.connect(this.analyser);
+    this.master.connect(this.analyser2);
+    this.analyser.connect(ctx.destination);
 
     this.stop = this.stop.bind(this);
 

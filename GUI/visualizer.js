@@ -5,25 +5,21 @@ export function visualize(synth) {
   const canvas = document.getElementById("visualizer");
   const ctx = canvas.getContext("2d");
 
-  synth.analyzer.fftSize = 2048;
+  synth.analyser.fftSize = 4096;
 
-  let length = synth.analyzer.frequencyBinCount;
+  let length = synth.analyser.frequencyBinCount;
   let data = new Uint8Array(length);
 
   return function draw() {
     requestAnimationFrame(draw);
 
-    length = synth.analyzer.frequencyBinCount;
+    length = synth.analyser.frequencyBinCount;
     data = new Uint8Array(length);
-    synth.analyzer.getByteTimeDomainData(data);
+    synth.analyser.getByteTimeDomainData(data);
     const freq = synth.currFreq;
 
-    
-
     let trough = false;
-    let peak = false;
     let start = 0;
-    let end = 0;
     for (let i = 0; i < length; i++) {
       if (data[i] < 128 && trough === false) {
         trough = true;
@@ -32,13 +28,6 @@ export function visualize(synth) {
         data = data.slice(i);
         break;
       }
-      // } else if (i > 1000 && data[i] > 128 ) {
-      //   peak = true;
-      // } else if (peak === true && data[i] < 128) {
-      //   end = i;
-      //   data = data.slice(0, end);
-      //   break;
-      // }
     }
 
     ctx.fillStyle = 'rgb(0,0,0)';
@@ -48,10 +37,10 @@ export function visualize(synth) {
     ctx.strokeStyle = 'rgb(50, 255, 50)';
     ctx.beginPath();
 
-    let sliceWidth = canvas.width / 800;
+    let sliceWidth = canvas.width / 1000;
     let x = 0;
 
-    for (let i = 0; i < 800; i++) {
+    for (let i = 0; i < 1000; i++) {
       let v = data[i] / 128;
       let y = v * canvas.height / 2;
 
@@ -71,12 +60,49 @@ export function visualize2() {
   const canvas = document.getElementById("visualizer2");
   const ctx = canvas.getContext("2d");
 
+  synth.analyser2.fftSize = 256;
+
+  let length = synth.analyser.frequencyBinCount;
+  let data = new Uint8Array(length);
+
+  let backgroundColor = 'rgb(0, 0, 0)';
+
   return function draw() {
-    canvas.setAttribute("width", window.outerWidth);
-    canvas.setAttribute("height", window.innerHeight);
-
-
     let visual = requestAnimationFrame(draw);
+    synth.analyser2.getByteFrequencyData(data)
 
+    canvas.setAttribute("width", window.outerWidth);
+    canvas.setAttribute("height", window.outerHeight);
+
+    ctx.fillStyle = backgroundColor;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    let barWidth = (canvas.width / length) * 15;
+    let barHeight;
+    let x = 0;
+    let totalAmp = 0;
+    for (let i = 0; i < length; i ++) {
+      barHeight = data[i] * (canvas.height / 150);
+      totalAmp += data[i];
+
+      ctx.fillStyle = 'rgb(0,0,0)';
+      ctx.fillRect(x,canvas.height-barHeight/2,barWidth,barHeight);
+
+      x += barWidth + 1;
+    }
+
+    //background color changes based on the total volume of the synth
+    let red, green, blue
+    totalAmp = (totalAmp / 20000) * 255;
+    red = Math.round(totalAmp / 1.5);
+    green = 0;
+    blue = 0;
+    if (totalAmp > 60) {
+      green = Math.round(totalAmp - 60);
+    }
+    if (totalAmp > 150) {
+      blue = Math.round(totalAmp - 150);
+    }
+    backgroundColor = 'rgb(' + red + ',' + green + ',' + blue + ')';
   }
 }
