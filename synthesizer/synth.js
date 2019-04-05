@@ -6,12 +6,13 @@ import Effects from './effects';
 import Envelopes from './envelopes';
 import MasterMix from './master_mixer';
 import LFO from './LFO';
-import { mergeParams } from "./reverb";
 
 class Synth {
 
   constructor(ctx) {
     this.state = "pause";
+    this.currFreq = 440;
+    this.oscilloscopeVals = {};
 
     this.context = ctx;
     this.semitone = Math.pow(2, 1/12);
@@ -132,6 +133,7 @@ class Synth {
 
   playFreq(freq) {
     this.state = "play";
+    this.currFreq = freq;
     if (this.context.state === "suspended") {
       this.context.resume();
     }

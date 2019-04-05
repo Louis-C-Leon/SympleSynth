@@ -316,3 +316,8 @@ html {
   position: absolute;
   width: 90px;
 }
+
+#visualizer2 {
+  position: absolute;
+  z-index: -5;
+}

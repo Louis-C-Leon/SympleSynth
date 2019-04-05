@@ -111,8 +111,10 @@ window.synth = synthesizer;
 document.addEventListener("DOMContentLoaded", () => {
   const keyboard = new _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__["default"](synthesizer);
   window.keyboard = keyboard;
-  const draw = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["default"])(synthesizer);
-  draw();
+  const draw1 = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["visualize"])(synthesizer);
+  const draw2 = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["visualize2"])(synthesizer);
+  draw1();
+  draw2();
 });
 
 /***/ }),
@@ -764,14 +766,15 @@ function setupOscControls(synth) {
 /*!***************************!*\
   !*** ./GUI/visualizer.js ***!
   \***************************/
-/*! exports provided: default */
+/*! exports provided: visualize, visualize2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "visualize", function() { return visualize; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "visualize2", function() { return visualize2; });
 // All visualization code inspired by 
 // https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Visualizations_with_Web_Audio_API
-
 function visualize(synth) {
 
   const canvas = document.getElementById("visualizer");
@@ -782,13 +785,36 @@ function visualize(synth) {
   let length = synth.analyzer.frequencyBinCount;
   let data = new Uint8Array(length);
 
-  return function draw() { 
+  return function draw() {
+    requestAnimationFrame(draw);
+
     length = synth.analyzer.frequencyBinCount;
     data = new Uint8Array(length);
-    
-    let visual = requestAnimationFrame(draw);
-
     synth.analyzer.getByteTimeDomainData(data);
+    const freq = synth.currFreq;
+
+    
+
+    let trough = false;
+    let peak = false;
+    let start = 0;
+    let end = 0;
+    for (let i = 0; i < length; i++) {
+      if (data[i] < 128 && trough === false) {
+        trough = true;
+      } else if (trough === true && data[i] > 128 && start === 0) {
+        start = i;
+        data = data.slice(i);
+        break;
+      }
+      // } else if (i > 1000 && data[i] > 128 ) {
+      //   peak = true;
+      // } else if (peak === true && data[i] < 128) {
+      //   end = i;
+      //   data = data.slice(0, end);
+      //   break;
+      // }
+    }
 
     ctx.fillStyle = 'rgb(0,0,0)';
     ctx.fillRect(0,0, canvas.width, canvas.height);
@@ -797,10 +823,10 @@ function visualize(synth) {
     ctx.strokeStyle = 'rgb(50, 255, 50)';
     ctx.beginPath();
 
-    let sliceWidth = canvas.width / length;
+    let sliceWidth = canvas.width / 800;
     let x = 0;
 
-    for (let i = 0; i < length; i++) {
+    for (let i = 0; i < 800; i++) {
       let v = data[i] / 128;
       let y = v * canvas.height / 2;
 
@@ -816,7 +842,19 @@ function visualize(synth) {
   }
 }
 
-/* harmony default export */ __webpack_exports__["default"] = (visualize);
+function visualize2() {
+  const canvas = document.getElementById("visualizer2");
+  const ctx = canvas.getContext("2d");
+
+  return function draw() {
+    canvas.setAttribute("width", window.outerWidth);
+    canvas.setAttribute("height", window.innerHeight);
+
+
+    let visual = requestAnimationFrame(draw);
+
+  }
+}
 
 /***/ }),
 
@@ -1649,8 +1687,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _envelopes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./envelopes */ "./synthesizer/envelopes.js");
 /* harmony import */ var _master_mixer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./master_mixer */ "./synthesizer/master_mixer.js");
 /* harmony import */ var _LFO__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./LFO */ "./synthesizer/LFO.js");
-/* harmony import */ var _reverb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./reverb */ "./synthesizer/reverb.js");
-
 
 
 
@@ -1664,6 +1700,8 @@ class Synth {
 
   constructor(ctx) {
     this.state = "pause";
+    this.currFreq = 440;
+    this.oscilloscopeVals = {};
 
     this.context = ctx;
     this.semitone = Math.pow(2, 1/12);
@@ -1784,6 +1822,7 @@ class Synth {
 
   playFreq(freq) {
     this.state = "play";
+    this.currFreq = freq;
     if (this.context.state === "suspended") {
       this.context.resume();
     }
