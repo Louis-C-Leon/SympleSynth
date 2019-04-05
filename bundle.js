@@ -319,6 +319,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _filter_controls__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./filter_controls */ "./GUI/filter_controls.js");
 /* harmony import */ var _envelope_controls__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./envelope_controls */ "./GUI/envelope_controls.js");
 /* harmony import */ var _effect_controls__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./effect_controls */ "./GUI/effect_controls.js");
+/* harmony import */ var _lfo_controls__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./lfo_controls */ "./GUI/lfo_controls.js");
+
 
 
 
@@ -329,6 +331,7 @@ class Keyboard {
     this.playNote = this.playNote.bind(this);
     this.setupEventListeners();
     this.envelopeControls = new _envelope_controls__WEBPACK_IMPORTED_MODULE_2__["default"](synth);
+    this.lfoControls = new _lfo_controls__WEBPACK_IMPORTED_MODULE_4__["default"](synth);
   }
 
   setupEventListeners() {
@@ -562,6 +565,64 @@ class Keyboard {
 
 /***/ }),
 
+/***/ "./GUI/lfo_controls.js":
+/*!*****************************!*\
+  !*** ./GUI/lfo_controls.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+class LfoControls {
+  constructor(synth) {
+    this.ampToggle = document.getElementById("lfoAmp");
+    this.filterToggle = document.getElementById("lfoFilter");
+    this.freqToggle = document.getElementById("lfoFreq");
+    this.synth = synth;
+
+    this.ampToggle.addEventListener("click", function(e){
+      if (this.ampToggle.classList.contains("buttonSelected")) {
+        this.ampToggle.classList.remove("buttonSelected");
+        this.synth.setLfo("none")
+      } else {
+        this.ampToggle.classList.add("buttonSelected");
+        this.filterToggle.classList.remove("buttonSelected");
+        this.freqToggle.classList.remove("buttonSelected");
+        this.synth.setLfo("amp");
+      }
+    }.bind(this))
+
+    this.filterToggle.addEventListener("click", function(e){
+      if (this.filterToggle.classList.contains("buttonSelected")) {
+        this.filterToggle.classList.remove("buttonSelected");
+        this.synth.setLfo("none")
+      } else {
+        this.filterToggle.classList.add("buttonSelected");
+        this.ampToggle.classList.remove("buttonSelected");
+        this.freqToggle.classList.remove("buttonSelected");
+        this.synth.setLfo("filter");
+      }
+    }.bind(this))
+
+    this.freqToggle.addEventListener("click", function(e){
+      if (this.freqToggle.classList.contains("buttonSelected")) {
+        this.freqToggle.classList.remove("buttonSelected");
+        this.synth.setLfo("none")
+      } else {
+        this.freqToggle.classList.add("buttonSelected");
+        this.filterToggle.classList.remove("buttonSelected");
+        this.ampToggle.classList.remove("buttonSelected");
+        this.synth.setLfo("freq");
+      }
+    }.bind(this))
+  }
+}
+
+/* harmony default export */ __webpack_exports__["default"] = (LfoControls);
+
+/***/ }),
+
 /***/ "./GUI/osc_controls.js":
 /*!*****************************!*\
   !*** ./GUI/osc_controls.js ***!
@@ -763,20 +824,22 @@ class LFO {
     this.lfo = ctx.createOscillator();
     this.lfo.frequency.value = 1;
     this.modAmmt = ctx.createGain();
+    this.params = [];
 
     this.lfo.start();
     this.lfo.connect(this.modAmmt);
   }
 
   setParam(params, mode) {
+    this.params = params;
     if (mode === "amp") {
       this.modAmmt.gain.value = .5;
     } else if (mode === "filter") {
-      this.modAmmt.gain.value = 500;
+      this.modAmmt.gain.value = 2000;
     } else if (mode === "freq") {
-      this.modAmmt.gain.value = 500;
+      this.modAmmt.gain.value = 10;
     } else {
-      this.modAmmt.gain = 0;
+      this.modAmmt.gain.value = 0;
     }
     this.modAmmt.disconnect();
     params.forEach( param => this.modAmmt.connect(param));
@@ -1617,13 +1680,15 @@ class Synth {
     this.LFO_PARAMS = {
       filter: [this.filters.filter1.frequency, this.filters.filter2.frequency], 
       amp: [this.master.volume.gain], 
-      freq: this.oscBank.map( osc => osc.node.frequency)}
+      freq: this.oscBank.map( osc => osc.node.frequency),
+      none: []
+    }
 
     this.toggleEffect = this.toggleEffect.bind(this);
   }
 
-  setLfo(param, mode) {
-    this.lfo.setParam(param, mode)
+  setLfo(mode) {
+    this.lfo.setParam(this.LFO_PARAMS[mode], mode)
   }
 
   preMix(options) {

@@ -49,13 +49,15 @@ class Synth {
     this.LFO_PARAMS = {
       filter: [this.filters.filter1.frequency, this.filters.filter2.frequency], 
       amp: [this.master.volume.gain], 
-      freq: this.oscBank.map( osc => osc.node.frequency)}
+      freq: this.oscBank.map( osc => osc.node.frequency),
+      none: []
+    }
 
     this.toggleEffect = this.toggleEffect.bind(this);
   }
 
-  setLfo(param, mode) {
-    this.lfo.setParam(param, mode)
+  setLfo(mode) {
+    this.lfo.setParam(this.LFO_PARAMS[mode], mode)
   }
 
   preMix(options) {

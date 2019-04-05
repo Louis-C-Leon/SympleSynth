@@ -2,12 +2,14 @@ import setupOscControls from './osc_controls';
 import setupFilterControls from './filter_controls';
 import EnvelopeControls from './envelope_controls';
 import { setupEffectsControls } from './effect_controls';
+import LfoControls from './lfo_controls';
 class Keyboard {
   constructor(synth) {
     this.synth = synth;
     this.playNote = this.playNote.bind(this);
     this.setupEventListeners();
     this.envelopeControls = new EnvelopeControls(synth);
+    this.lfoControls = new LfoControls(synth);
   }
 
   setupEventListeners() {
