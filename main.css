@@ -302,4 +302,17 @@ html {
   grid-column-end: 5;
   grid-row-start: 2;
   grid-row-end: 3;
+  display: flex;  
+  align-items: center;
+}
+
+.lfoButtons {
+  position: relative;
+  left: 27%;
+}
+
+.lfoSliders {
+  transform: translateX(-20px) rotate(-90deg);
+  position: absolute;
+  width: 90px;
 }

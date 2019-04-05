@@ -56,8 +56,13 @@ class Synth {
     this.toggleEffect = this.toggleEffect.bind(this);
   }
 
-  setLfo(mode) {
-    this.lfo.setParam(this.LFO_PARAMS[mode], mode)
+  setLfo(options) {
+    if (options.mode) {
+      this.lfo.setParam(this.LFO_PARAMS[options.mode], options.mode);
+    }
+    if (options.params) {
+      this.lfo.setOptions(options.params);
+    }
   }
 
   preMix(options) {

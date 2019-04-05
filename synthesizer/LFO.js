@@ -4,6 +4,7 @@ class LFO {
     this.lfo.frequency.value = 1;
     this.modAmmt = ctx.createGain();
     this.params = [];
+    this.maxAmmt = 0;
 
     this.lfo.start();
     this.lfo.connect(this.modAmmt);
@@ -12,16 +13,26 @@ class LFO {
   setParam(params, mode) {
     this.params = params;
     if (mode === "amp") {
-      this.modAmmt.gain.value = .5;
+      this.maxAmmt = .7;
     } else if (mode === "filter") {
-      this.modAmmt.gain.value = 2000;
+      this.maxAmmt = 10000;
     } else if (mode === "freq") {
-      this.modAmmt.gain.value = 10;
+      this.maxAmmt = 100;
     } else {
-      this.modAmmt.gain.value = 0;
+      this.maxAmmt = 0;
     }
     this.modAmmt.disconnect();
+    this.modAmmt.gain.value = this.maxAmmt / 2;
     params.forEach( param => this.modAmmt.connect(param));
+  }
+
+  setOptions(options) {
+    if (options.frequency) {
+      this.lfo.frequency.value = options.frequency;
+    }
+    if (options.amplitude) {
+      this.modAmmt.gain.value = this.maxAmmt * options.amplitude;
+    }
   }
 }
 

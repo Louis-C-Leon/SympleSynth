@@ -579,43 +579,53 @@ class LfoControls {
     this.ampToggle = document.getElementById("lfoAmp");
     this.filterToggle = document.getElementById("lfoFilter");
     this.freqToggle = document.getElementById("lfoFreq");
+    this.ammt = document.getElementById("lfoAmplitude");
+    this.frequency = document.getElementById("lfoFrequency");
     this.synth = synth;
 
     this.ampToggle.addEventListener("click", function(e){
       if (this.ampToggle.classList.contains("buttonSelected")) {
         this.ampToggle.classList.remove("buttonSelected");
-        this.synth.setLfo("none")
+        this.synth.setLfo({mode: "none"})
       } else {
         this.ampToggle.classList.add("buttonSelected");
         this.filterToggle.classList.remove("buttonSelected");
         this.freqToggle.classList.remove("buttonSelected");
-        this.synth.setLfo("amp");
+        this.synth.setLfo({mode: "amp"});
       }
     }.bind(this))
 
     this.filterToggle.addEventListener("click", function(e){
       if (this.filterToggle.classList.contains("buttonSelected")) {
         this.filterToggle.classList.remove("buttonSelected");
-        this.synth.setLfo("none")
+        this.synth.setLfo({mode: "none"})
       } else {
         this.filterToggle.classList.add("buttonSelected");
         this.ampToggle.classList.remove("buttonSelected");
         this.freqToggle.classList.remove("buttonSelected");
-        this.synth.setLfo("filter");
+        this.synth.setLfo({mode: "filter"});
       }
     }.bind(this))
 
     this.freqToggle.addEventListener("click", function(e){
       if (this.freqToggle.classList.contains("buttonSelected")) {
         this.freqToggle.classList.remove("buttonSelected");
-        this.synth.setLfo("none")
+        this.synth.setLfo({mode: "none"})
       } else {
         this.freqToggle.classList.add("buttonSelected");
         this.filterToggle.classList.remove("buttonSelected");
         this.ampToggle.classList.remove("buttonSelected");
-        this.synth.setLfo("freq");
+        this.synth.setLfo({mode: "freq"});
       }
     }.bind(this))
+
+    this.ammt.addEventListener("input", function(e){
+      this.synth.setLfo({params: { amplitude: parseFloat(e.target.value) }})
+    }.bind(this));
+
+    this.frequency.addEventListener("input", function(e){
+      this.synth.setLfo({params: { frequency: parseFloat(e.target.value) }})
+    }.bind(this));
   }
 }
 
@@ -825,6 +835,7 @@ class LFO {
     this.lfo.frequency.value = 1;
     this.modAmmt = ctx.createGain();
     this.params = [];
+    this.maxAmmt = 0;
 
     this.lfo.start();
     this.lfo.connect(this.modAmmt);
@@ -833,16 +844,26 @@ class LFO {
   setParam(params, mode) {
     this.params = params;
     if (mode === "amp") {
-      this.modAmmt.gain.value = .5;
+      this.maxAmmt = .7;
     } else if (mode === "filter") {
-      this.modAmmt.gain.value = 2000;
+      this.maxAmmt = 10000;
     } else if (mode === "freq") {
-      this.modAmmt.gain.value = 10;
+      this.maxAmmt = 100;
     } else {
-      this.modAmmt.gain.value = 0;
+      this.maxAmmt = 0;
     }
     this.modAmmt.disconnect();
+    this.modAmmt.gain.value = this.maxAmmt / 2;
     params.forEach( param => this.modAmmt.connect(param));
+  }
+
+  setOptions(options) {
+    if (options.frequency) {
+      this.lfo.frequency.value = options.frequency;
+    }
+    if (options.amplitude) {
+      this.modAmmt.gain.value = this.maxAmmt * options.amplitude;
+    }
   }
 }
 
@@ -1687,8 +1708,13 @@ class Synth {
     this.toggleEffect = this.toggleEffect.bind(this);
   }
 
-  setLfo(mode) {
-    this.lfo.setParam(this.LFO_PARAMS[mode], mode)
+  setLfo(options) {
+    if (options.mode) {
+      this.lfo.setParam(this.LFO_PARAMS[options.mode], options.mode);
+    }
+    if (options.params) {
+      this.lfo.setOptions(options.params);
+    }
   }
 
   preMix(options) {

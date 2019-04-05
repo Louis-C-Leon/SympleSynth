@@ -113,9 +113,17 @@
         </div>
 
         <div class="lfoControls" id="lfoControls">
-          <div class= "selectButton" id="lfoAmp">volume</div>
-          <div class= "selectButton" id="lfoFreq">oscillator frequency</div>
-          <div class= "selectButton" id="lfoFilter">filter frequency</div>
+          <div class="lfoSliders">
+            <input type="range" min="0" max="1" step="0.05" id="lfoAmplitude"
+              class="inputSlider lfoInputSlider" value="0">
+            <input type="range" min="0" max="12" step="0.05" id="lfoFrequency"
+              class="inputSlider lfoInputSlider" value="0">
+          </div>
+          <div class="lfoButtons">
+            <div class= "selectButton" id="lfoAmp">volume</div>
+            <div class= "selectButton" id="lfoFreq">oscillator frequency</div>
+            <div class= "selectButton" id="lfoFilter">filter frequency</div>
+          </div>
         </div>
 
         <div class="envelopeControls" id="envelopeControls">
