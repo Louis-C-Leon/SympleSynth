@@ -191,19 +191,24 @@ class EnvelopeControls {
     }.bind(this))
 
     this.filterButton.addEventListener("click", function(e) {
+      if (this.mode !== "filter") {
+        this.filterButton.classList.toggle("buttonSelected");
+        this.ampButton.classList.toggle("buttonSelected");
+      }
       this.mode = "filter";
       this.envAttack.value = this.synth.envelopes.filter.attack;
       this.envRelease.value = this.synth.envelopes.filter.release;
-      this.filterButton.classList.toggle("buttonSelected");
-      this.ampButton.classList.toggle("buttonSelected");
     }.bind(this));
 
     this.ampButton.addEventListener("click", function(e) {
+      if (this.mode !== "amp") {
+        this.filterButton.classList.toggle("buttonSelected");
+        this.ampButton.classList.toggle("buttonSelected");
+      }
       this.mode = "amp";
       this.envAttack.value = this.synth.envelopes.amp.attack;
       this.envRelease.value = this.synth.envelopes.amp.release;
-      this.filterButton.classList.toggle("buttonSelected");
-      this.ampButton.classList.toggle("buttonSelected");
+
     }.bind(this));
   }
 }
@@ -757,25 +762,25 @@ class LFO {
   constructor(ctx, synth) {
     this.lfo = ctx.createOscillator();
     this.lfo.frequency.value = 1;
-    this.setMode("volume");
     this.modAmmt = ctx.createGain();
-    this.modAmmt.gain.value = 10000;
-    this.param = synth.filters.filter2.frequency
 
     this.lfo.start();
     this.lfo.connect(this.modAmmt);
-    // this.modAmmt.connect(this.param);
   }
 
-  setMode(mode) {
-    if (mode === "volume") {
-      this.maxAmmt = .75;
+  setParam(params, mode) {
+    if (mode === "amp") {
+      this.modAmmt.gain.value = .5;
+    } else if (mode === "filter") {
+      this.modAmmt.gain.value = 500;
     } else if (mode === "freq") {
-      this.maxAmmt = 1000;
+      this.modAmmt.gain.value = 500;
+    } else {
+      this.modAmmt.gain = 0;
     }
+    this.modAmmt.disconnect();
+    params.forEach( param => this.modAmmt.connect(param));
   }
-
-
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (LFO);
@@ -1391,11 +1396,12 @@ class PreMixer {
 /*!*******************************!*\
   !*** ./synthesizer/reverb.js ***!
   \*******************************/
-/*! exports provided: default */
+/*! exports provided: mergeParams, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "mergeParams", function() { return mergeParams; });
 // Implementation of Manfred Schoeder's Freeverb algorithmic reverb
 // inspired by this article https://itnext.io/algorithmic-reverb-and-web-audio-api-e1ccec94621a
 // Uses lowpass "comb" filters to simulate delay lines and allpass filters
@@ -1419,8 +1425,7 @@ class CompositeAudioNode {
   }
 }
 
-// Utility function for controlling multiple audio params as if
-// they were one
+// Utility function for controlling multiple audio params as if they were one
 // credit to https://gist.github.com/miselaytes-anton/7d795d6efcc7774b136c2b73dc38ed32
 
 function mergeParams(params){
@@ -1560,6 +1565,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _envelopes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./envelopes */ "./synthesizer/envelopes.js");
 /* harmony import */ var _master_mixer__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./master_mixer */ "./synthesizer/master_mixer.js");
 /* harmony import */ var _LFO__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./LFO */ "./synthesizer/LFO.js");
+/* harmony import */ var _reverb__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./reverb */ "./synthesizer/reverb.js");
+
 
 
 
@@ -1607,7 +1614,16 @@ class Synth {
 
     this.lfo = new _LFO__WEBPACK_IMPORTED_MODULE_7__["default"](ctx, this);
 
+    this.LFO_PARAMS = {
+      filter: [this.filters.filter1.frequency, this.filters.filter2.frequency], 
+      amp: [this.master.volume.gain], 
+      freq: this.oscBank.map( osc => osc.node.frequency)}
+
     this.toggleEffect = this.toggleEffect.bind(this);
+  }
+
+  setLfo(param, mode) {
+    this.lfo.setParam(param, mode)
   }
 
   preMix(options) {

@@ -21,11 +21,10 @@ class CompositeAudioNode {
   }
 }
 
-// Utility function for controlling multiple audio params as if
-// they were one
+// Utility function for controlling multiple audio params as if they were one
 // credit to https://gist.github.com/miselaytes-anton/7d795d6efcc7774b136c2b73dc38ed32
 
-function mergeParams(params){
+export function mergeParams(params){
   const singleParam = params[0]
   const parameter = {};
   const audioNodeMethods = Object.getOwnPropertyNames(AudioParam.prototype)

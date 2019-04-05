@@ -20,19 +20,24 @@ class EnvelopeControls {
     }.bind(this))
 
     this.filterButton.addEventListener("click", function(e) {
+      if (this.mode !== "filter") {
+        this.filterButton.classList.toggle("buttonSelected");
+        this.ampButton.classList.toggle("buttonSelected");
+      }
       this.mode = "filter";
       this.envAttack.value = this.synth.envelopes.filter.attack;
       this.envRelease.value = this.synth.envelopes.filter.release;
-      this.filterButton.classList.toggle("buttonSelected");
-      this.ampButton.classList.toggle("buttonSelected");
     }.bind(this));
 
     this.ampButton.addEventListener("click", function(e) {
+      if (this.mode !== "amp") {
+        this.filterButton.classList.toggle("buttonSelected");
+        this.ampButton.classList.toggle("buttonSelected");
+      }
       this.mode = "amp";
       this.envAttack.value = this.synth.envelopes.amp.attack;
       this.envRelease.value = this.synth.envelopes.amp.release;
-      this.filterButton.classList.toggle("buttonSelected");
-      this.ampButton.classList.toggle("buttonSelected");
+
     }.bind(this));
   }
 }

@@ -6,6 +6,7 @@ import Effects from './effects';
 import Envelopes from './envelopes';
 import MasterMix from './master_mixer';
 import LFO from './LFO';
+import { mergeParams } from "./reverb";
 
 class Synth {
 
@@ -45,7 +46,16 @@ class Synth {
 
     this.lfo = new LFO(ctx, this);
 
+    this.LFO_PARAMS = {
+      filter: [this.filters.filter1.frequency, this.filters.filter2.frequency], 
+      amp: [this.master.volume.gain], 
+      freq: this.oscBank.map( osc => osc.node.frequency)}
+
     this.toggleEffect = this.toggleEffect.bind(this);
+  }
+
+  setLfo(param, mode) {
+    this.lfo.setParam(param, mode)
   }
 
   preMix(options) {
