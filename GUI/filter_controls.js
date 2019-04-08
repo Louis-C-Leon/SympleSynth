@@ -2,7 +2,7 @@ function setupFilterControls(synth) {
 
   const filter1Dropdown = document.getElementById("filter1Dropdown");
   filter1Dropdown.addEventListener("click", function() {
-    document.getElementById("filter1Type").classList.toggle("show");
+    document.getElementById("filter1Type").classList.toggle("showFilter");
   });
 
   const filter1Type = document.getElementById("filter1Type");
@@ -38,7 +38,7 @@ function setupFilterControls(synth) {
 
   const filter2Dropdown = document.getElementById("filter2Dropdown");
   filter2Dropdown.addEventListener("click", function() {
-    document.getElementById("filter2Type").classList.toggle("show");
+    document.getElementById("filter2Type").classList.toggle("showFilter");
   });
 
   const filter2Type = document.getElementById("filter2Type");

@@ -128,9 +128,17 @@ class Synth {
   setEnvelope(options) {
     if (options.type === "amp") {
       this.envelopes.setAmpEnvelope(options);
-    } else {
+    } else if (options.type === "filter") {
       this.envelopes.setFilterEnvelope(options);
+    } else if (options.type === "filterAmmt") {
+      this.setEnvAmmt(options.ammt);
     }
+  }
+
+  setEnvAmmt(ammt) {
+    this.envAmmt = ammt;
+    this.endFreq1 = this.startFreq1 + (1000 * this.envAmt);
+    this.endFreq2 = this.startFreq2 + (1000 * this.envAmt);
   }
 
   playFreq(freq) {

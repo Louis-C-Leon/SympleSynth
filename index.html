@@ -11,13 +11,11 @@
   <body>
     <canvas id="visualizer2"></canvas>
     <div class="mainContainer">
-    <div class="textBox" id="infoLeft">
-      Sample Text Sample TextSample TextSample TextSample TextSample TextSample Text Sample TextSample TextSample TextSample TextSample TextSample Text Sample TextSample TextSample TextSample TextSample TextSample Text Sample TextSample TextSample TextSample TextSample Text
-    </div>
+    <div class="textBox" id="infoLeft"></div>
 
     <div class="keyboardContainer">
 
-      <canvas id="visualizer"></canvas>
+      <canvas id="visualizer" width="250px"></canvas>
       <div class="masterVolumeContainer">
         <input type="range" class="inputSlider"min="0" max="1" step=".05" 
         value=".7" id="masterVolume">
@@ -28,13 +26,13 @@
         class="inputSlider" value="3">
       </div>
 
-      <div class="oscControls" id="osc1Controls">
-        <div class="waveDropdown dropdown" id="osc1Dropdown">sine</div>
-        <div class="waveDropdownContent dropdownContent" id="osc1Wave">
-          <div class="waveDropdownItem" id="osc1Sine">sine</div>
-          <div class="waveDropdownItem" id="osc1Square">square</div>
-          <div class="waveDropdownItem" id="osc1Triangle">triangle</div>
-          <div class="waveDropdownItem" id="osc1Saw">sawtooth</div>
+      <div class="oscControls controlModule" id="osc1Controls">
+        <div class="selectButton dropdownSelect" id="osc1Dropdown">sine</div>
+        <div class="dropdownContent" id="osc1Wave">
+          <div class="dropdownItem" id="osc1Sine">sine</div>
+          <div class="dropdownItem" id="osc1Square">square</div>
+          <div class="dropdownItem" id="osc1Triangle">triangle</div>
+          <div class="dropdownItem" id="osc1Saw">sawtooth</div>
         </div>
         <input type="range" min="-12" max="12" step="1" id="osc1Interval" 
           class="inputSlider oscInputSlider" value="0">
@@ -42,13 +40,13 @@
           value=".7" id="osc1Vol">
       </div>
 
-      <div class="oscControls" id="osc2Controls">
-        <div class="waveDropdown dropdown" id="osc2Dropdown">square</div>
-        <div class="waveDropdownContent dropdownContent" id="osc2Wave">
-          <div class="waveDropdownItem" id="osc2Sine">sine</div>
-          <div class="waveDropdownItem" id="osc2Square">square</div>
-          <div class="waveDropdownItem" id="osc2Triangle">triangle</div>
-          <div class="waveDropdownItem" id="osc2Saw">sawtooth</div>
+      <div class="oscControls controlModule" id="osc2Controls">
+        <div class="selectButton dropdownSelect" id="osc2Dropdown">square</div>
+        <div class="dropdownContent" id="osc2Wave">
+          <div class="dropdownItem" id="osc2Sine">sine</div>
+          <div class="dropdownItem" id="osc2Square">square</div>
+          <div class="dropdownItem" id="osc2Triangle">triangle</div>
+          <div class="dropdownItem" id="osc2Saw">sawtooth</div>
         </div>
         <input type="range" min="-12" max="12" step="1" id="osc2Interval" 
           class="inputSlider oscInputSlider" value="0">
@@ -56,13 +54,13 @@
           value=".7" id="osc2Vol">
       </div>
 
-      <div class="oscControls" id="osc3Controls">
-        <div class="waveDropdown dropdown" id="osc3Dropdown">sawtooth</div>
-        <div class="waveDropdownContent dropdownContent" id="osc3Wave">
-          <div class="waveDropdownItem dropdownItem" id="osc3Sine">sine</div>
-          <div class="waveDropdownItem dropdownItem" id="osc3Square">square</div>
-          <div class="waveDropdownItem dropdownItem" id="osc3Triangle">triangle</div>
-          <div class="waveDropdownItem dropdownItem" id="osc3Saw">sawtooth</div>
+      <div class="oscControls controlModule" id="osc3Controls">
+        <div class="selectButton dropdownSelect" id="osc3Dropdown">sawtooth</div>
+        <div class="dropdownContent" id="osc3Wave">
+          <div class="dropdownItem" id="osc3Sine">sine</div>
+          <div class="dropdownItem" id="osc3Square">square</div>
+          <div class="dropdownItem" id="osc3Triangle">triangle</div>
+          <div class="dropdownItem" id="osc3Saw">sawtooth</div>
         </div>
         <input type="range" min="-12" max="12" step="1" id="osc3Interval" 
           class="inputSlider oscInputSlider" value="0">
@@ -70,12 +68,12 @@
           value=".7" id="osc3Vol">
       </div>
 
-      <div class="filterControls" id="filter1Controls">
-        <div class="filterDropdown dropdown" id="filter1Dropdown">lowpass</div>
-        <div class="filterDropdownContent dropdownContent" id="filter1Type">
-          <div class="filterDropdownItem dropdownItem" id="filter1Lowpass">lowpass</div>
-          <div class="filterDropdownItem dropdownItem" id="filter1Highpass">highpass</div>
-          <div class="filterDropdownItem dropdownItem" id="filter1Bandpass">bandpass</div>
+      <div class="filterControls controlModule" id="filter1Controls">
+        <div class="selectButton dropdownSelect" id="filter1Dropdown">lowpass</div>
+        <div class="dropdownContent filterDropdown" id="filter1Type">
+          <div class="dropdownItem" id="filter1Lowpass">lowpass</div>
+          <div class="dropdownItem" id="filter1Highpass">highpass</div>
+          <div class="dropdownItem" id="filter1Bandpass">bandpass</div>
         </div>
         <input type="range" min="50" max="17000" step="5" id="filter1Freq"
           class="inputSlider filterInputSlider" value="400">
@@ -85,12 +83,12 @@
           class="inputSlider filterInputSlider" value="0">
       </div>
 
-      <div class="filterControls" id="filter2Controls">
-          <div class="filterDropdown dropdown" id="filter2Dropdown">lowpass</div>
-          <div class="filterDropdownContent dropdownContent" id="filter2Type">
-            <div class="filterDropdownItem dropdownItem" id="filter2Lowpass">lowpass</div>
-            <div class="filterDropdownItem dropdownItem" id="filter2Highpass">highpass</div>
-            <div class="filterDropdownItem dropdownItem" id="filter2Bandpass">bandpass</div>
+      <div class="filterControls controlModule" id="filter2Controls">
+          <div class="selectButton dropdownSelect" id="filter2Dropdown">lowpass</div>
+          <div class="dropdownContent filterDropdown" id="filter2Type">
+            <div class="dropdownItem" id="filter2Lowpass">lowpass</div>
+            <div class="dropdownItem" id="filter2Highpass">highpass</div>
+            <div class="dropdownItem" id="filter2Bandpass">bandpass</div>
           </div>
           <input type="range" min="50" max="17000" step="5" id="filter2Freq"
             class="inputSlider filterInputSlider" value="400">
@@ -100,7 +98,7 @@
             class="inputSlider filterInputSlider" value="1">
         </div>
 
-        <div class="effectsControls" id="effectsControls">
+        <div class="effectsControls controlModule" id="effectsControls">
           <div class="effectsModules">
             <div class="distortionControls">
               <div class="selectButton buttonSelected" id="distortionToggle">Distortion</div>
@@ -117,7 +115,7 @@
             class="inputSlider effectsInputSlider" value="1">
         </div>
 
-        <div class="lfoControls" id="lfoControls">
+        <div class="lfoControls controlModule" id="lfoControls">
           <div class="lfoSliders">
             <input type="range" min="0" max="1" step="0.05" id="lfoAmplitude"
               class="inputSlider lfoInputSlider" value="0">
@@ -131,7 +129,7 @@
           </div>
         </div>
 
-        <div class="envelopeControls" id="envelopeControls">
+        <div class="envelopeControls controlModule" id="envelopeControls">
           <div class="envelopeSelect" id="envelopeSelect">
             <div class="envelopeSelect selectButton" id="envelopeFilter">filter</div>
             <div class="envelopeSelect selectButton buttonSelected" id="envelopeAmp">amp</div>
@@ -142,6 +140,9 @@
             <input type="range" min="0" max="2" step=".1" id="envelopeRelease"
               class="inputSlider envelopeInputSlider" value=".1">
           </div>
+          <input type="range" min="0" max="4" step=".1" id="envelopeAmmt"
+            class="inputSlider envelopeInputSlider" value="1">
+
         </div>
       
       <div class="keyboard">
@@ -194,9 +195,7 @@
       min="0" max="1" step=".05" value=".7"
       id="filterWetDry" style="display:none">
 
-      <div class="textBox" id="infoRight">
-          Sample Text Sample TextSample TextSample TextSample TextSample TextSample Text Sample TextSample TextSample TextSample TextSample TextSample Text Sample TextSample TextSample TextSample TextSample TextSample Text Sample TextSample TextSample TextSample TextSample Text
-      </div>
+      <div class="textBox" id="infoRight"></div>
   </div>
   </body>
 </html>

@@ -1,17 +1,17 @@
 function setupOscControls(synth) {
   const osc1Dropdown = document.getElementById("osc1Dropdown")
     osc1Dropdown.addEventListener("click", function() {
-      document.getElementById("osc1Wave").classList.toggle("show");
+      document.getElementById("osc1Wave").classList.toggle("showOsc");
     })
 
     const osc2Dropdown = document.getElementById("osc2Dropdown")
     osc2Dropdown.addEventListener("click", function() {
-      document.getElementById("osc2Wave").classList.toggle("show");
+      document.getElementById("osc2Wave").classList.toggle("showOsc");
     })
 
     const osc3Dropdown = document.getElementById("osc3Dropdown")
     osc3Dropdown.addEventListener("click", function() {
-      document.getElementById("osc3Wave").classList.toggle("show");
+      document.getElementById("osc3Wave").classList.toggle("showOsc");
     })
 
     window.addEventListener("click", function(e) {
@@ -21,8 +21,9 @@ function setupOscControls(synth) {
       for (let i = 0; i < dropdowns.length; i++) {
         openDropdown = dropdowns[i];
         parent = openDropdown.parentElement;
-        if (openDropdown.classList.contains('show') && parent !== e.target.parentElement) {
-          openDropdown.classList.remove('show');
+        if ((openDropdown.classList.contains('showOsc') || openDropdown.classList.contains('showFilter')) && parent !== e.target.parentElement) {
+          openDropdown.classList.remove('showOsc');
+          openDropdown.classList.remove('showFilter')
         }
       }
     })

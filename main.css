@@ -3,11 +3,12 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: rgba(238, 229, 233, 1);
   width: 100%;
   height: 100%;
   background-color: black;
-  font-family: "Trebuchet MS"
+  font-family: "Trebuchet MS";
+  font-weight: lighter;
 }
 
 .mainContainer {
@@ -20,12 +21,11 @@ body {
   padding: 7px;
   margin: 7px;
   height: 70%;
-  background-color: rgba(255, 255, 255, .7);
+  background-color: rgba(238, 229, 233, .7);;
   overflow: scroll;
   color: black;
   font-size: 15px;
 }
-
 
 html {
   height: 100%;
@@ -36,13 +36,61 @@ html {
   height: 500px;
   width: 850px;
   grid-template-columns: 10% 23% auto 23% 10%;
-  grid-template-rows: 20% 20% 20% auto;
-  border: 10px solid rgb(100, 100, 100);
+  grid-template-rows: 23% 23% 23% auto;
+  border: 10px solid rgba(107, 129, 140, 1);
   border-bottom: none;
-  border-radius: 10px;
-  background-image: linear-gradient(to bottom right, rgb(36, 33, 33), rgb(131, 122, 118));
-
+  border-radius: 15px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-image: linear-gradient(to bottom right, rgb(6, 47, 66), rgba(8, 65, 92, 1));
 }
+
+.controlModule {
+  border: 2px solid rgba(204, 41, 54, .8);
+  box-sizing: border-box;
+}
+
+#osc1Controls {
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 5px;
+}
+
+#osc2Controls {
+  border-bottom: none;
+  border-right: none;
+}
+
+#filter1Controls {
+  border-bottom: none;
+  border-top-right-radius: 5px;
+}
+
+#filter2Controls {
+  border-bottom: none;
+}
+
+#osc3Controls {
+  border-bottom-left-radius: 5px;
+  border-right: none;
+}
+
+#effectsControls {
+  border-right: none;
+  border-bottom: none;
+  border-top-left-radius: 5px;
+}
+
+#lfoControls {
+  border-right: none;
+  border-bottom: none;
+}
+
+#envelopeControls {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
 
 #visualizer {
   border-radius: 5px;
@@ -50,6 +98,7 @@ html {
   grid-column-end: 4;
   grid-row-start: 1;
   grid-row-end: 3;
+  margin: 10px;
   place-self: center stretch;
   border: 1px solid black;
 }
@@ -57,42 +106,54 @@ html {
 .inputSlider {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
-  height: 5px;
-  border-radius: 3px;
-  background-color: rgb(36, 55, 116);
+  width: 80%;
+  height: 10px;
+  border-radius: 20px;
+  border: 2px solid black;
+  background-color: rgba(241, 191, 152, 1);
   opacity: .7;
+  transition: all .2s;
 }
 
 .inputSlider:hover {
-  border: .5px solid rgb(185, 28, 0);
+  border: 2px solid rgba(204, 41, 54, 1);
   opacity: 1;
 }
 
 .inputSlider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 12px;
-  height: 12px;
-  border: 1px solid black;
+  width: 21px;
+  height: 21px;
+  border: 2px solid black;
   border-radius: 50%;
-  background: rgb(9, 169, 243);
+  background: rgba(107, 129, 140, 1);
   cursor: pointer;
+  transition: all .2s;
+}
+
+.inputSlider::-webkit-slider-thumb:hover {
+  border: 2px solid rgba(204, 41, 54, 1);
 }
 
 .inputSlider::-moz-range-thumb {
   cursor: pointer;
-  border: 2px solid black;
-  width: 3px;
-  height: 3px;
-  background: black;
+  border: 1px solid black;
+  width: 20px;
+  height: 20px;
+  background: rgba(107, 129, 140, 1);
   border-radius: 50%;
+  transition: all .2s;
+}
+
+.inputSlider::-moz-range-thumb:hover {
+  border: 2px solid rgba(204, 41, 54, 1);
 }
 
 .inputSlider:focus {
   outline-style:none;
   box-shadow:none;
-  border: .5px solid rgb(185, 28, 0);
+  border: 2px solid rgba(204, 41, 54, 1);
 }
 
 .masterVolumeContainer {
@@ -107,7 +168,7 @@ html {
 }
 
 .octaveContainer {
-  width: 150px;
+  width: 100px;
   height: 5px;
   place-self: center;
   transform: rotate(-90deg);
@@ -119,46 +180,67 @@ html {
 
 .oscControls {
   position: relative;
-  place-self: center;
   display: flex;
   flex-direction: column;
   cursor: pointer;
-  padding: 10px;
-  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
   align-items: center;
 }
 
 .filterControls {
   position: relative;
-  place-self: center;
   display: flex;
+  width: 100%;
+  height: 100%;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;          
 }
 
 .oscInputSlider {
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .filterInputSlider {
-  margin-top: 15px;
+  margin-top: 5px;
 }
 
-.dropdown {
-  cursor: pointer;
-}
 .dropdownContent {
   cursor: pointer;
   position: absolute;
   transform: translateY(25px);
-  display: none;
+  overflow: hidden;
+  height: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  z-index: 3;
+  background-color: rgba(107, 129, 140, 1);
+  opacity: .9;
+  padding-top: none;
+  width: auto;
+  transition: height .2s;
+  top: 20px;
+  border-radius: 4px;
+}
+.dropdownItem {
+  margin-left: 5px;
+  margin-right: 5px;
+  line-height: 150%;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  transition: all .8s;
 }
 .dropdownItem:hover {
-  border: 1px solid red;
-  width: 100%;
+  background-color: rgba(204, 41, 54, 1);
 }
 
+.filterDropdown {
+  transform: translateY(20px);
+}
 #osc1Controls {
   grid-column-start: 1;
   grid-column-end: 2;
@@ -201,42 +283,64 @@ html {
   grid-row-end: 3;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  place-self: center;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
   align-items: center;
-  height: 70%;
 }
 
 #envelopeSliderContainer {
   transform: rotate(-90deg);
-  width: 100px;
-  height: 50px;
   display: flex;
+  height: 50px;
   flex-direction: column;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: flex-end;
+}
+
+.envelopeAmmt {
+  width: 50px;
 }
 
 .selectButton {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid gray;
+  border: 2px solid black;
   border-radius: 5px;
   background: black;
   padding: 4px;
   margin: 4px;
   font-size: 13px;
+  transition: background .3s;
 }
 
 .selectButton:hover {
   cursor: pointer;
+  background: rgb(44, 54, 59); 
 }
 
 .buttonSelected {
-  background-image: radial-gradient(rgb(253, 180, 43), rgb(146, 97, 6));
+  background-image: radial-gradient(rgb(255, 59, 75), rgb(104, 36, 41));
+  border: 2px solid rgb(95, 30, 34);
+  opacity: 1;
+  transition: opacity .2s;
+}
+
+.buttonSelected:hover {
+  background-image: radial-gradient(rgb(255, 59, 75), rgb(104, 36, 41));
+  opacity: .8;
+}
+
+.dropdownSelect {
+  width: 60px;
+  background: rgba(107, 129, 140, 1);
   color: black;
-  border: 1px solid orange;
+  border: 2px solid black;
+}
+
+.dropdownSelect:hover {
+  background: rgb(129, 160, 175)
 }
 
 .keyboard {
@@ -248,19 +352,9 @@ html {
   display: flex;
 }
 
-.blackKey {
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: black;
-  position: relative;
-  z-index: 2;
-  height: 60%;
-  width: 60%;
-  bottom: 40%;
-  cursor: pointer;
-  left: 50%;
+.key {
+  transition: all .3s;
+  border: 1px solid gray;
 }
 
 .whiteKey {
@@ -268,26 +362,59 @@ html {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  background-color: white;
+  line-height: 300%;
+  background-color: rgba(238, 229, 233, 1);
   height: 100%;
   width: 14.285%;
-  border: 1px solid gray;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
   cursor: pointer;
 }
 
-.key:hover {}
+.keyHover {
+  background: rgb(182, 173, 177);
+  border: 1px solid rgba(204, 41, 54, 1);
+}
 
-.show {
+.blackKey {
+  color: rgba(238, 229, 233, 1);
   display: flex;
-  flex-direction: column;
-  align-items:center;
-  z-index: 3;
+  justify-content: center;
+  align-items: center;
   background-color: black;
-  opacity: .7;
-  padding: 5px;
-  padding-top: none;
+  position: absolute;
+  z-index: 2;
+  top: 0%;
+  height: 60%;
+  width: 40px;
+  transform: translateX(35px);
+  cursor: pointer;
+}
+
+.blackKey:hover {
+  background: rgb(46, 46, 46);
+}
+
+.keyPressed {
+  background: rgb(108, 137, 177);
+}
+
+.keyPressed:hover {
+  background: rgb(108, 137, 177);
+}
+
+.showOsc {
+  height: 97px;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
+}
+
+.showFilter {
+  height: 73px;
+  border-left: 2px solid black;
+  border-right: 2px solid black;
+  border-bottom: 2px solid black;
 }
 
 .effectsControls {
@@ -298,8 +425,13 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  height: 100%;
   justify-content: space-evenly;
-  margin: 5px;
+}
+
+#effectsMix {
+  width: 87%;
 }
 
 .effectsModules {
@@ -308,10 +440,18 @@ html {
 
 .distortionControls {
   margin: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .reverbControls {
   margin: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .lfoControls {
@@ -319,6 +459,8 @@ html {
   grid-column-end: 5;
   grid-row-start: 2;
   grid-row-end: 3;
+  width: 100%;
+  height: 100%;
   display: flex;  
   align-items: center;
 }

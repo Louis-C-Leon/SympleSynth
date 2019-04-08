@@ -34,7 +34,7 @@ export function visualize(synth) {
     ctx.fillRect(0,0, canvas.width, canvas.height);
 
     ctx.lineWidth = 3;
-    ctx.strokeStyle = 'rgb(50, 255, 50)';
+    ctx.strokeStyle = 'rgb(255, 7, 28)';
     ctx.beginPath();
 
     let sliceWidth = canvas.width / 1000;
@@ -64,13 +64,14 @@ export function visualize2() {
 
   let length = synth.analyser.frequencyBinCount;
   let data = new Uint8Array(length);
+  let floaters = new Uint8Array(length);
 
   let backgroundColor = 'rgb(0, 0, 0)';
 
   return function draw() {
 
     requestAnimationFrame(draw);
-    
+
     synth.analyser2.getByteFrequencyData(data)
 
     canvas.setAttribute("width", window.outerWidth);
@@ -81,14 +82,29 @@ export function visualize2() {
 
     let barWidth = (canvas.width / length) * 15;
     let barHeight;
+    let floaterHeight;
     let x = 0;
     let totalAmp = 0;
-    for (let i = 0; i < length; i ++) {
+    for (let i = 3; i < length; i ++) {
       barHeight = data[i] * (canvas.height / 150);
       totalAmp += data[i];
+      if (floaters[i] < data[i]) {
+        floaters[i] = data[i];
+      } else if (floaters[i] > 0){
+        floaters[i] = floaters[i] - 3;
+      }
+      if (floaters[i] > 250) {
+        floaters[i] = 0;
+      }
+      floaterHeight = floaters[i] * (canvas.height / 150) + 10;
+
 
       ctx.fillStyle = 'rgb(0,0,0)';
-      ctx.fillRect(x,canvas.height-barHeight/2,barWidth,barHeight);
+      ctx.fillRect(x, canvas.height - (barHeight/2), barWidth,barHeight);
+      if (floaters[i] > 1) {
+        ctx.fillStyle = 'rgba(255, 255, 255)';
+        ctx.fillRect(x, canvas.height - (floaterHeight/2), barWidth, 10);
+      }
 
       x += barWidth + 1;
     }
