@@ -56,7 +56,7 @@ export function visualize(synth) {
   }
 }
 
-export function visualize2() {
+export function visualize2(synth) {
   const canvas = document.getElementById("visualizer2");
   const ctx = canvas.getContext("2d");
 

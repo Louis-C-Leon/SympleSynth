@@ -4,9 +4,7 @@ import {visualize, visualize2} from './GUI/visualizer';
 
 const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
-window.context = currContext;
 const synthesizer = new Synth(currContext);
-window.synth = synthesizer;
 
 document.addEventListener("DOMContentLoaded", () => {
   const keyboard = new Keyboard(synthesizer);
@@ -15,4 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const draw2 = visualize2(synthesizer);
   draw1();
   draw2();
+
+  const gitHub = document.getElementById("gitHub");
+  const linkedIn = document.getElementById("linkedIn");
+  gitHub.addEventListener("click", () => {
+    console.log("click")
+    document.getElementById("gitHubLink").click();
+  })
+  linkedIn.addEventListener("click", () => {
+    console.log("click")
+    document.getElementById("linkedInLink").click();
+  })
 });

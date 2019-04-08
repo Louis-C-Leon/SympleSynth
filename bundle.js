@@ -104,9 +104,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
-window.context = currContext;
 const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
-window.synth = synthesizer;
 
 document.addEventListener("DOMContentLoaded", () => {
   const keyboard = new _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__["default"](synthesizer);
@@ -115,6 +113,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const draw2 = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["visualize2"])(synthesizer);
   draw1();
   draw2();
+
+  const gitHub = document.getElementById("gitHub");
+  const linkedIn = document.getElementById("linkedIn");
+  gitHub.addEventListener("click", () => {
+    console.log("click")
+    document.getElementById("gitHubLink").click();
+  })
+  linkedIn.addEventListener("click", () => {
+    console.log("click")
+    document.getElementById("linkedInLink").click();
+  })
 });
 
 /***/ }),
@@ -1061,7 +1070,7 @@ function visualize(synth) {
   }
 }
 
-function visualize2() {
+function visualize2(synth) {
   const canvas = document.getElementById("visualizer2");
   const ctx = canvas.getContext("2d");
 

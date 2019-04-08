@@ -17,7 +17,7 @@ body {
 }
 
 header {
-  margin: 20px;
+  margin-bottom: 20px;
   font-size: 75px;
   font-family: "Efesto";
   color: rgba(204, 41, 54, 1);
@@ -390,7 +390,6 @@ html {
 
 .keyHover {
   background: rgb(182, 173, 177);
-  border: 1px solid rgba(204, 41, 54, 1);
 }
 
 .blackKey {
@@ -496,4 +495,25 @@ html {
 #visualizer2 {
   position: absolute;
   z-index: -5;
+}
+
+.links {
+  display: flex;
+  height: auto;
+  margin-top: 20px;
+  width: auto;
+}
+
+.imageLink {
+  height: 50px;
+  width: 50px;
+  margin-left: 20px;
+  margin-right: 20px;
+  cursor: pointer;
+  opacity: .7;
+  transition: opacity .2s;
+}
+
+.imageLink:hover {
+  opacity: 1;
 }
