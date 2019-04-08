@@ -1,7 +1,7 @@
 body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   color: rgba(238, 229, 233, 1);
   width: 100%;
@@ -9,6 +9,18 @@ body {
   background-color: black;
   font-family: "Trebuchet MS";
   font-weight: lighter;
+}
+
+@font-face {
+  font-family: "Efesto";
+  src: url('./assets/Efesto-Regular.woff');
+}
+
+header {
+  margin: 20px;
+  font-size: 75px;
+  font-family: "Efesto";
+  color: rgba(204, 41, 54, 1);
 }
 
 .mainContainer {
@@ -21,10 +33,15 @@ body {
   padding: 7px;
   margin: 7px;
   height: 70%;
+  width: 165px;
   background-color: rgba(238, 229, 233, .7);;
   overflow: scroll;
   color: black;
   font-size: 15px;
+  font-family: "Arial";
+  line-height: 150%;
+  display: flex;
+  justify-content: center;
 }
 
 html {

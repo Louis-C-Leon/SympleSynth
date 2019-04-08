@@ -2,6 +2,7 @@ import setupOscControls from './osc_controls';
 import setupFilterControls from './filter_controls';
 import EnvelopeControls from './envelope_controls';
 import { setupEffectsControls } from './effect_controls';
+import setupMouseoverText from './mouseover_text';
 import LfoControls from './lfo_controls';
 class Keyboard {
   constructor(synth) {
@@ -280,6 +281,7 @@ class Keyboard {
     setupOscControls(this.synth);
     setupFilterControls(this.synth);
     setupEffectsControls(this.synth);
+    setupMouseoverText();
   }
 
   playNote(note) {
