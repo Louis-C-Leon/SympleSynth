@@ -29,7 +29,7 @@ header {
 }
 
 .textBox {
-  border: 2px solid lightslategray;
+  border: 3px solid rgba(107, 129, 140, .7);
   padding: 7px;
   margin: 7px;
   height: 70%;
@@ -42,6 +42,7 @@ header {
   line-height: 150%;
   display: flex;
   justify-content: center;
+  border-radius: 7px;
 }
 
 html {
