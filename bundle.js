@@ -1030,7 +1030,6 @@ function visualize(synth) {
     length = synth.analyser.frequencyBinCount;
     data = new Uint8Array(length);
     synth.analyser.getByteTimeDomainData(data);
-    const freq = synth.currFreq;
 
     let trough = false;
     let start = 0;
@@ -1088,8 +1087,8 @@ function visualize2(synth) {
 
     synth.analyser2.getByteFrequencyData(data)
 
-    canvas.setAttribute("width", window.outerWidth);
-    canvas.setAttribute("height", window.outerHeight);
+    canvas.setAttribute("width", window.innerWidth);
+    canvas.setAttribute("height", window.innerHeight);
 
     ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, canvas.width, canvas.height);

@@ -1,3 +1,18 @@
+@font-face {
+  font-family: "Efesto";
+  src: url('./assets/Efesto-Regular.woff');
+}
+
+@font-face {
+  font-family: "MONO RGO";
+  src: url('./assets/MonoRgo.woff');
+}
+
+@font-face {
+  font-family: "Digitalis";
+  src: url('./assets/DIGITALI.woff');
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -7,13 +22,9 @@ body {
   width: 100%;
   height: 100%;
   background-color: black;
-  font-family: "Trebuchet MS";
-  font-weight: lighter;
-}
-
-@font-face {
-  font-family: "Efesto";
-  src: url('./assets/Efesto-Regular.woff');
+  font-family: "Digitalis";
+  margin: 0;
+  user-select: none;
 }
 
 header {
@@ -29,7 +40,7 @@ header {
 }
 
 .textBox {
-  border: 3px solid rgba(107, 129, 140, .7);
+  border: 3px solid rgba(8, 65, 92, .7);
   padding: 7px;
   margin: 7px;
   height: 70%;
@@ -243,6 +254,7 @@ html {
   top: 20px;
   border-radius: 4px;
 }
+
 .dropdownItem {
   margin-left: 5px;
   margin-right: 5px;
@@ -330,12 +342,14 @@ html {
   padding: 4px;
   margin: 4px;
   font-size: 13px;
+  font-wight: 500;
   transition: background .3s;
 }
 
 .selectButton:hover {
   cursor: pointer;
   background: rgb(44, 54, 59); 
+  border: 2px solid rgba(204, 41, 54, 1);
 }
 
 .buttonSelected {
@@ -368,6 +382,7 @@ html {
   grid-row-end: 5;
   position: relative;
   display: flex;
+  font-family: "Arial"
 }
 
 .key {
@@ -427,11 +442,23 @@ html {
   border-bottom: 2px solid black;
 }
 
+.showOsc:hover {
+  border-left: 2px solid rgba(204, 41, 54, 1);
+  border-right: 2px solid rgba(204, 41, 54, 1);
+  border-bottom: 2px solid rgba(204, 41, 54, 1);
+}
+
 .showFilter {
   height: 73px;
   border-left: 2px solid black;
   border-right: 2px solid black;
   border-bottom: 2px solid black;
+}
+
+.showFilter:hover {
+  border-left: 2px solid rgba(204, 41, 54, 1);
+  border-right: 2px solid rgba(204, 41, 54, 1);
+  border-bottom: 2px solid rgba(204, 41, 54, 1);
 }
 
 .effectsControls {
