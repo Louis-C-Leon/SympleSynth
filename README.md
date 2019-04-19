@@ -1,5 +1,5 @@
 # SynthesizerJS
-[Live Link](https://louis-c-leon.github.io/SynthesizerJS/)
+[Live Link](http://www.symplesynth.net)
 
 This is not a production readme, because this project is not really ready to be looked at! I'm just leaving a message for anyjob search instructors at a/A who may be looking at this, to say that I know that this project is badly incomplete and needs a lot of work before I send it out. I'm sorry I ran out of time leaving so much undone.
 
