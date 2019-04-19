@@ -46,7 +46,6 @@ header {
   height: 70%;
   width: 165px;
   background-color: rgba(238, 229, 233, .7);;
-  overflow: scroll;
   color: black;
   font-size: 15px;
   font-family: "Arial";
