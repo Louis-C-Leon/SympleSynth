@@ -16,12 +16,12 @@ Features include:
 * Audio visualization using HTML Canvas; visualizes frequency/volume graph and waveshape
 
 One notable challenge I had to overcome during this project was dealing with certain bugs with the 
-Web Audio API. This API is still relatively new to the web, and I encountered some bugs that prevented
-me from getting the intended behavior, specifically with methods that would change audio parameters over time rather
-than instantly to avoid audio artifacts. I may come back to this problem and try to solve it using Web Audio methods, 
+Web Audio API. This API is still relatively new to the web, and I encountered some problems that prevented
+me from getting the intended behavior from methods that are meant to change audio parameters over time rather
+than instantly (to avoid audio artifacts). I may come back to this problem and try to solve it using Web Audio methods, 
 but for now I took the opportunity to learn how to implement the same behavior using the JavaScript event loop. I wrote
-the following methods in my envelope class to allow the envelopes to gradually modulate the desired audio parameters over
-time:
+the following methods in my envelope class to allow the envelopes to gradually ramp up the desired audio parameters over
+time (the initial "ramp up" of parameters from an envelope is commonly called the "attack"):
 ```
   attack() {
     let ampStepSize;
