@@ -1,16 +1,23 @@
 # SynthesizerJS
 [Live Link](http://www.symplesynth.net)
 
-This is not a production readme, because this project is not really ready to be looked at! I'm just leaving a message for anyjob search instructors at a/A who may be looking at this, to say that I know that this project is badly incomplete and needs a lot of work before I send it out. I'm sorry I ran out of time leaving so much undone.
+SympleSynth is a browser-based application that emulates an old-school analogue synthesizer and allows
+users to create and modify thier own sounds via JavaScript and the native Web Audio API. I designed a responsive
+user interface to control the synthesizer object and implemented it with vanilla JavaScript/HTML/CSS.
 
-Here are the things I need to finish during the job search curriculum, in order of importance:
+Features include:
+* 3 audio sources that can be individually controlled (pitch and volume)
+* 2 filter modules that can be assigned to different filter types and run either in series or in sequence
+* 2 effects (reverb and distortion) that can be adjusted, enabled, or disabled
+* Envelope modulation of volume and filter frequency
+* LFO modulation of volume, note frequency, or filter frequency
+* Wet/dry and volume controlls to control the sound and volume throughout sections
+* Dynamic user interface that informs the user about the function of each control, which control the user has selected, etc.
+* Audio visualization using HTML Canvas; visualizes frequency/volume graph and waveshape
 
-* Add title, header text, and a sidebar of information about the project
-* Add labels to all the controls that explain what the user is actually doing. plan: have text appear to the right of the synth whenever the user hovers over a control that explains what that slider/menu is doing.
-* Add github/linkdIn/personal links
-* Redo color scheme and design, make site visually appealing
-* Replace this readme with an actual production readme
-* fix bug that causes instrument to often get stuck playing one note
-* Add envelope and effects controls to the currently empty section of the instrument
+When I get the time to return to this project, I aim to complete the following goals:
 
-I hope to have all of this done within the next week or so.
+* Work on better cross-browser compatibility (currently only really works on google chrome)
+* Fix annoying audio artifacts that can occur when using the LFO to modulate filter frequency
+* Implement step sequencer for recording simple melodies
+* Implement sound storage for saving favorite sounds with LocalStorage
