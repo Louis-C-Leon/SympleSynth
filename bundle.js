@@ -101,30 +101,45 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+const isChrome = !!window.chrome
 
-const Ctx = window.AudioContext || window.webkitAudioContext;
-const currContext = new Ctx();
-const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
+if (isChrome) {
 
-document.addEventListener("DOMContentLoaded", () => {
-  const keyboard = new _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__["default"](synthesizer);
-  window.keyboard = keyboard;
-  const draw1 = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["visualize"])(synthesizer);
-  const draw2 = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["visualize2"])(synthesizer);
-  draw1();
-  draw2();
 
-  const gitHub = document.getElementById("gitHub");
-  const linkedIn = document.getElementById("linkedIn");
-  gitHub.addEventListener("click", () => {
-    console.log("click")
-    document.getElementById("gitHubLink").click();
+  const Ctx = window.AudioContext || window.webkitAudioContext;
+  const currContext = new Ctx();
+  const synthesizer = new _synthesizer_synth__WEBPACK_IMPORTED_MODULE_0__["default"](currContext);
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const keyboard = new _GUI_keyboard__WEBPACK_IMPORTED_MODULE_1__["default"](synthesizer);
+    const draw1 = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["visualize"])(synthesizer);
+    const draw2 = Object(_GUI_visualizer__WEBPACK_IMPORTED_MODULE_2__["visualize2"])(synthesizer);
+    draw1();
+    draw2();
+
+    const gitHub = document.getElementById("gitHub");
+    const linkedIn = document.getElementById("linkedIn");
+    gitHub.addEventListener("click", () => {
+      console.log("click")
+      document.getElementById("gitHubLink").click();
+    })
+    linkedIn.addEventListener("click", () => {
+      console.log("click")
+      document.getElementById("linkedInLink").click();
+    })
+  });
+} else {
+  let errorModal = document.createElement("SECTION");
+  let errorTextBox = document.createElement("DIV");
+  errorModal.classList.add("errorModal");
+  errorTextBox.classList.add("errorTextBox");
+  let errorText = document.createTextNode("Sorry! The Web Audio API is still fairly new to browsers, creating some compatibility issues. Please visit this site with Google Chrome.")
+  errorTextBox.appendChild(errorText);
+  errorModal.appendChild(errorTextBox);
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelector("body").appendChild(errorModal);
   })
-  linkedIn.addEventListener("click", () => {
-    console.log("click")
-    document.getElementById("linkedInLink").click();
-  })
-});
+}
 
 /***/ }),
 
@@ -1415,8 +1430,7 @@ class Envelopes {
     if (this.ampOut.value < 1) {
       this.ampOut.value += ampStep;
     }
-
-    // debugger;
+    
     //Clear the interval if the attack is complete
     if (Math.abs(this.filters[0].value - this.synth.endFreq1) < 5 &&
         Math.abs(this.filters[1].value - this.synth.endFreq2) < 5 &&

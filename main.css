@@ -544,3 +544,24 @@ html {
 .imageLink:hover {
   opacity: 1;
 }
+
+.errorModal {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: 100;
+  background-color: rgba(100, 100, 100, .5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.errorTextBox {
+  width: 200px;
+  border: 1px solid gray;
+  border-radius: 10px;
+  padding: 20px;
+  background-color: white;
+  color: orangered;
+  line-height: 150%;
+}
