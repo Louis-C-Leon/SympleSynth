@@ -6,9 +6,11 @@ const Ctx = window.AudioContext || window.webkitAudioContext;
 const currContext = new Ctx();
 const synthesizer = new Synth(currContext);
 
+const isChrome = !!window.chrome && (!!window.chrome.webstore || !!window.chrome.runtime);
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const keyboard = new Keyboard(synthesizer);
-  window.keyboard = keyboard;
   const draw1 = visualize(synthesizer);
   const draw2 = visualize2(synthesizer);
   draw1();

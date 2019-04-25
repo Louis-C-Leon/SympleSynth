@@ -88,8 +88,7 @@ class Envelopes {
     if (this.ampOut.value < 1) {
       this.ampOut.value += ampStep;
     }
-
-    // debugger;
+    
     //Clear the interval if the attack is complete
     if (Math.abs(this.filters[0].value - this.synth.endFreq1) < 5 &&
         Math.abs(this.filters[1].value - this.synth.endFreq2) < 5 &&
