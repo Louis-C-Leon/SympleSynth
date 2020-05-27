@@ -4,8 +4,6 @@ import {visualize, visualize2} from './GUI/visualizer';
 const isChrome = !!window.chrome
 
 if (isChrome) {
-
-
   const Ctx = window.AudioContext || window.webkitAudioContext;
   const currContext = new Ctx();
   const synthesizer = new Synth(currContext);
