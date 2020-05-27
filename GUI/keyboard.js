@@ -291,7 +291,6 @@ class Keyboard {
         this.synth.playNote(currNote);
       })
     } else {
-
       note = note.slice(0, note.length - 1);
       let currNote = note + (parseInt(this.synth.octave) + 1);
       return(() => {
