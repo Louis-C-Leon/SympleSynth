@@ -1,5 +1,5 @@
 # SynthesizerJS
-[Live Link](http://www.symplesynth.net)
+[Live Link](http://www.louis-c-leon.github.io/SympleSynth)
 
 SympleSynth is a browser-based application that emulates an old-school analogue synthesizer and allows
 users to create and modify thier own sounds via JavaScript and the native Web Audio API. I designed a responsive
